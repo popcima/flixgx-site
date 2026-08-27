@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>67cine — Admin</title>
+<title>flixgx — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -623,7 +623,7 @@
     if(res.error){ root.innerHTML = alertHTML('DB error: '+res.error.message); return; }
     var c = res.data || {};
     root.innerHTML =
-      '<div class="info-bar">⚙ <div>Controls the content locker across the 67cine site. Changes take effect on the next page load. <b>Test mode</b> unlocks with fake leads for previewing — set it back to Off for real visitors.</div></div>' +
+      '<div class="info-bar">⚙ <div>Controls the content locker across the flixgx site. Changes take effect on the next page load. <b>Test mode</b> unlocks with fake leads for previewing — set it back to Off for real visitors.</div></div>' +
       '<div class="panel"><div class="panel-body" style="display:flex;flex-direction:column;gap:16px">' +
         lkField('Redirect base URL','lc-base','text', c.player_base_url||'', 'https://cineby.at',
           'On unlock the viewer is sent to <b style="color:var(--accent)">{base}/movie/{id}</b> or <b style="color:var(--accent)">{base}/tv/{id}</b>.') +

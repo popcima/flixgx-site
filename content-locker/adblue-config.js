@@ -5,8 +5,8 @@
  */
 
 window.ADBLUE_CONFIG = {
-    userId: '814688',
-    apiKey: 'b94f67c251a8f3607ab9e24d68a292ad',
+    userId: '321842',
+    apiKey: 'cfe031daa224cb470f9d4c9a7a531982',
     offerFeedUrl: 'https://d1cdbd1x576ga0.cloudfront.net/public/offers/feed.php',
     checkLeadsUrl: 'https://d1cdbd1x576ga0.cloudfront.net/public/external/check2.php',
     numOffers: 3,
