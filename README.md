@@ -44,6 +44,18 @@ Alternatively, edit `assets/player-config.js` directly to set `apiBaseUrl` to th
 
 The local preview is functional, but publishing the HTML alone will not make streaming work on the live domain. A reachable playback backend is required.
 
+### Deploy the API on Render
+
+The included `render.yaml` creates one Docker web service with a `/health` check, a generated server-only API key, and CORS for the FlixGX domains. It uses Render's assigned HTTPS URL automatically through [`RENDER_EXTERNAL_URL`](https://render.com/docs/environment-variables); `PUBLIC_BASE_URL` remains an explicit override for a custom API domain. Do not copy the local `.env` file into the service.
+
+1. Connect a Render account and create a Blueprint from this repository on `main`.
+2. Wait for its deployment and verify `https://<assigned-service>.onrender.com/health` returns JSON with `ok: true`.
+3. Verify a movie and TV playback request with `Origin: https://flixgx.com`, including the returned HLS manifest and segments.
+4. Set the GitHub Actions repository variable `STREAM_API_ORIGIN` to that verified HTTPS origin, without a trailing slash or path.
+5. Run the **Deploy to GitHub Pages** workflow manually. This rebuild is necessary after changing the variable. Verify the live `assets/player-config.js` contains the API origin, then test movie and episode playback on the public site.
+
+The Blueprint selects the Free compute plan for initial verification. Render's [Free service limits](https://render.com/docs/free) include idle shutdown and restrictions on heavy outbound traffic. Video relaying consumes outbound bandwidth, and overages can be billed when a payment method is present. Choose hosting capacity and a bandwidth budget appropriate to public traffic before a wider launch. Keep one API instance while playback sessions remain in memory.
+
 ## Endpoints
 
 These routes are intentionally public for visitors to this website and inherit API validation, CORS and rate limits:

@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: flixgx-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    repo: https://github.com/popcima/flixgx-site
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    numInstances: 1
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: API_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://flixgx.com,https://www.flixgx.com,https://popcima.github.io
