@@ -214,62 +214,8 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
 .modal-ep-desc{font-size:12px;color:rgba(255,255,255,.38);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .modal-ep-loading{display:flex;align-items:center;justify-content:center;height:80px;color:var(--muted);font-size:13px}
 
-/* PLAYER */
-.fp-overlay{position:fixed;inset:0;z-index:600;background:#000;display:none;flex-direction:column}
-.fp-overlay.open{display:flex}
-.fp-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.38)}
-.fp-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");opacity:.45;pointer-events:none}
-.fp-top{position:relative;z-index:10;display:flex;align-items:center;gap:12px;padding:18px 20px 0;background:linear-gradient(to bottom,rgba(0,0,0,.72),transparent)}
-.fp-back{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s}
-.fp-back:hover{background:rgba(255,255,255,.2)}
-.fp-back svg{width:18px;height:18px}
-.fp-top-info{flex:1;min-width:0}
-.fp-top-title{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fp-top-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:1px}
-.fp-center{flex:1;position:relative;z-index:5;display:flex;align-items:center;justify-content:center;gap:44px}
-.fp-skip{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:rgba(255,255,255,.8);cursor:pointer;transition:color .15s,transform .15s}
-.fp-skip:hover{color:#fff;transform:scale(1.08)}
-.fp-skip:active{transform:scale(.92)}
-.fp-skip svg{width:34px;height:34px}
-.fp-skip span{font-size:10px;font-weight:800;letter-spacing:.04em}
-.fp-play-btn{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.35);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;backdrop-filter:blur(10px)}
-.fp-play-btn:hover{background:rgba(255,255,255,.28)}
-.fp-play-btn:active{transform:scale(.93)}
-.fp-play-btn svg{width:30px;height:30px}
-.fp-bottom{position:relative;z-index:10;padding:0 20px calc(28px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(0,0,0,.85),transparent)}
-.fp-prog-wrap{position:relative;height:20px;display:flex;align-items:center;cursor:pointer;margin-bottom:10px;touch-action:none}
-.fp-track{position:absolute;left:0;right:0;height:3px;background:rgba(255,255,255,.18);border-radius:999px;overflow:hidden}
-.fp-buf{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.28);border-radius:999px;width:0}
-.fp-fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:999px;width:0}
-.fp-dot{position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.5);transform:translateX(-50%);top:50%;margin-top:-6.5px;pointer-events:none;left:0;transition:transform .12s}
-.fp-prog-wrap:hover .fp-dot{transform:translateX(-50%) scale(1.25)}
-.fp-tooltip{position:absolute;bottom:22px;background:rgba(0,0,0,.75);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;transform:translateX(-50%);pointer-events:none;white-space:nowrap;display:none}
-.fp-prog-wrap:hover .fp-tooltip{display:block}
-.fp-row{display:flex;align-items:center;gap:8px}
-.fp-time{font-size:12px;font-weight:600;color:rgba(255,255,255,.75);font-variant-numeric:tabular-nums;min-width:100px}
-.fp-spacer{flex:1}
-.fp-vol-row{display:flex;align-items:center;gap:6px}
-.fp-vol-slider{-webkit-appearance:none;width:0;height:4px;border-radius:999px;background:rgba(255,255,255,.25);outline:none;cursor:pointer;transition:width .22s;overflow:hidden}
-.fp-vol-row:hover .fp-vol-slider{width:70px}
-.fp-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
-.fp-vol-slider::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:none}
-.fp-icon-btn{width:36px;height:36px;border-radius:8px;background:transparent;border:none;color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;font-family:inherit}
-.fp-icon-btn:hover{background:rgba(255,255,255,.1);color:#fff}
-.fp-icon-btn svg{width:18px;height:18px}
-.fp-fs-icon-in{display:block}
-.fp-fs-icon-out{display:none}
-:fullscreen .fp-fs-icon-in{display:none}
-:fullscreen .fp-fs-icon-out{display:block}
-:-webkit-full-screen .fp-fs-icon-in{display:none}
-:-webkit-full-screen .fp-fs-icon-out{display:block}
-.fp-tap-zone{position:absolute;top:0;bottom:0;width:32%;z-index:6;pointer-events:auto}
-.fp-tap-left{left:0}
-.fp-tap-right{right:0}
-.fp-ripple{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.13);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;pointer-events:none}
-.fp-ripple.show{opacity:1}
-.fp-ripple svg{width:22px;height:22px;fill:#fff}
-.fp-ripple span{font-size:10px;font-weight:800;color:#fff;margin-top:3px}
 </style>
+<link rel="stylesheet" href="assets/player.css">
 </head>
 <body>
 
@@ -339,36 +285,71 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
   </div>
 </div>
 
-<div class="fp-overlay" id="fp-overlay">
-  <div id="fp-bg" class="fp-bg"></div>
-  <div class="fp-grain"></div>
-  <div class="fp-tap-zone fp-tap-left" id="fp-tap-l"><div class="fp-ripple" id="fp-rip-l"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>-10s</span></div></div>
-  <div class="fp-tap-zone fp-tap-right" id="fp-tap-r"><div class="fp-ripple" id="fp-rip-r"><svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>+10s</span></div></div>
-  <div class="fp-top" id="fp-ui">
-    <button class="fp-back" id="fp-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-    <div class="fp-top-info"><div class="fp-top-title" id="fp-title"></div><div class="fp-top-sub" id="fp-sub"></div></div>
-  </div>
-  <div class="fp-center" id="fp-center">
-    <button class="fp-skip" id="fp-rew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg><span>10s</span></button>
-    <button class="fp-play-btn" id="fp-play"><svg id="fp-play-icon" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
-    <button class="fp-skip" id="fp-fwd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg><span>10s</span></button>
-  </div>
-  <div class="fp-bottom" id="fp-bottom">
-    <div class="fp-prog-wrap" id="fp-prog">
-      <div class="fp-track"><div class="fp-buf" id="fp-buf"></div><div class="fp-fill" id="fp-fill"></div></div>
-      <div class="fp-dot" id="fp-dot"></div><div class="fp-tooltip" id="fp-tip">0:00</div>
+
+<div id="fp-overlay" class="stream-player" role="dialog" aria-modal="true" aria-labelledby="stream-title" aria-hidden="true" tabindex="-1">
+  <video id="fp-video" playsinline preload="metadata" crossorigin="anonymous"></video>
+  <header class="stream-top stream-chrome">
+    <button id="stream-close" class="stream-icon-button" type="button" aria-label="Close player" title="Close player" ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14 5-7 7 7 7M7 12h14"/></svg></button>
+    <div class="stream-heading"><h2 id="stream-title"></h2><p id="stream-detail"></p></div>
+    <button id="stream-episodes-toggle" class="stream-episodes-button" type="button" aria-label="Seasons &amp; episodes" aria-expanded="false" aria-controls="stream-episodes-menu" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="6" height="6" rx="1"/><path d="M13 5h8m-8 4h6M3 15h18M3 20h18"/></svg>
+      <span class="stream-episodes-long-label">Seasons &amp; episodes</span><span class="stream-episodes-short-label" aria-hidden="true">Episodes</span>
+    </button>
+    <button id="stream-cast" class="stream-icon-button" type="button" aria-label="Cast to a screen" title="Cast to a screen" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7V5a2 2 0 0 1 2-2h15a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5M2 11a10 10 0 0 1 10 10M2 16a5 5 0 0 1 5 5"/><circle cx="2" cy="21" r="1" fill="currentColor" stroke="none"/></svg></button>
+  </header>
+  <div id="stream-episodes-menu" class="stream-menu stream-episodes-menu" role="region" aria-label="Seasons and episodes" hidden>
+    <h3>Seasons &amp; episodes</h3>
+    <div id="stream-episodes" hidden>
+      <label for="stream-season">Season</label><select id="stream-season"></select>
+      <label for="stream-episode">Episode</label><select id="stream-episode"></select>
+      <button id="stream-next" class="stream-action" type="button" disabled>Next episode <span aria-hidden="true">→</span></button>
     </div>
-    <div class="fp-row">
-      <span class="fp-time" id="fp-time">0:00 / 1:42:00</span>
-      <div class="fp-spacer"></div>
-      <div class="fp-vol-row">
-        <button class="fp-icon-btn" id="fp-mute"><svg id="fp-vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
-        <input type="range" class="fp-vol-slider" id="fp-vol" min="0" max="100" value="80">
+  </div>
+  <div id="stream-spinner" class="stream-spinner" aria-hidden="true" hidden></div>
+  <div id="stream-message" class="stream-message" hidden>
+    <p id="stream-status" role="status" aria-live="polite"></p>
+    <button id="stream-retry" class="stream-action" type="button" hidden>Retry playback</button>
+    <button id="stream-start" class="stream-action" type="button" hidden>Play video</button>
+  </div>
+  <div id="stream-announcement" class="stream-sr-only" role="status" aria-live="polite"></div>
+  <div id="stream-subtitle-menu" class="stream-menu" role="region" aria-label="Subtitle settings" hidden>
+    <h3>Subtitles</h3>
+    <label for="stream-subtitles">Language</label>
+    <select id="stream-subtitles" disabled><option value="-1">Off</option></select>
+    <p id="stream-subtitle-status" class="stream-note"></p>
+    <a id="stream-download" hidden>Download subtitles</a>
+  </div>
+  <div id="stream-settings-menu" class="stream-menu" role="region" aria-label="Playback settings" hidden>
+    <h3>Playback settings</h3>
+    <label for="stream-quality">Quality</label>
+    <select id="stream-quality" disabled><option value="-1">Auto</option></select>
+    <label for="stream-audio">Audio</label>
+    <select id="stream-audio" disabled><option value="0">Default</option></select>
+    <label for="stream-speed">Playback speed</label>
+    <select id="stream-speed"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>Normal</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+  </div>
+  <div class="stream-bottom stream-chrome">
+    <div class="stream-seek-wrap">
+      <div class="stream-timeline" aria-hidden="true"><div id="stream-buffered"></div><div id="stream-played"></div></div>
+      <input id="stream-seek" class="stream-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Seek video" disabled>
+    </div>
+    <div class="stream-control-row">
+      <div class="stream-control-left">
+        <button id="stream-play" class="stream-icon-button" type="button" aria-label="Play" title="Play" aria-keyshortcuts="Space K"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="stream-play-symbol" d="m8 4 12 8-12 8Z" fill="currentColor" stroke="none"/><g class="stream-pause-symbol" fill="currentColor" stroke="none"><rect x="5" y="3" width="5" height="18" rx="1"/><rect x="14" y="3" width="5" height="18" rx="1"/></g></svg></button>
+        <button id="stream-backward" class="stream-icon-button" type="button" aria-label="Back 10 seconds" title="Back 10 seconds" ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 4 5 7l3 2M5 7a9 9 0 1 1-2 7"/><text x="12.5" y="15.5" text-anchor="middle" fill="currentColor" stroke="none" font-size="8" font-weight="700">10</text></svg></button>
+        <button id="stream-forward" class="stream-icon-button" type="button" aria-label="Forward 10 seconds" title="Forward 10 seconds" ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m16 4 3 3-3 2m3-2a9 9 0 1 0 2 7"/><text x="11.5" y="15.5" text-anchor="middle" fill="currentColor" stroke="none" font-size="8" font-weight="700">10</text></svg></button>
+        <div class="stream-volume-group">
+          <button id="stream-mute" class="stream-icon-button" type="button" aria-label="Mute" title="Mute" aria-keyshortcuts="M"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 4 6 8H3v8h3l5 4Z" fill="currentColor" stroke="none"/><g class="stream-volume-waves"><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></g><path class="stream-muted-symbol" d="m16 9 6 6m0-6-6 6"/></svg></button>
+          <input id="stream-volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+        </div>
+        <output id="stream-time" class="stream-time" aria-live="off">0:00 / 0:00</output>
       </div>
-      <button class="fp-icon-btn" id="fp-fs">
-        <svg class="fp-fs-icon-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-        <svg class="fp-fs-icon-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
-      </button>
+      <div class="stream-control-right">
+        <button id="stream-subtitle-toggle" class="stream-icon-button" type="button" aria-label="Subtitles" title="Subtitles" aria-expanded="false" aria-controls="stream-subtitle-menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="3" fill="currentColor" stroke="none"/><g stroke="#000" stroke-width="1.7"><path d="M6 12h3m3 0h6M6 16h6m3 0h3"/></g></svg></button>
+        <button id="stream-settings-toggle" class="stream-icon-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="stream-settings-menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 2-.7 2.5-2.1 1.2L4.2 5 2 8.8l1.8 1.8v2.8L2 15.2 4.2 19l2.5-.7 2.1 1.2.7 2.5h5l.7-2.5 2.1-1.2 2.5.7 2.2-3.8-1.8-1.8v-2.8L22 8.8 19.8 5l-2.5.7-2.1-1.2L14.5 2Z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="3.4" fill="#000" stroke="none"/></svg></button>
+        <button id="stream-pip" class="stream-icon-button" type="button" aria-label="Picture in picture" title="Picture in picture" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="3"/><rect x="12" y="12" width="10" height="8" rx="1.5" fill="#000"/><path d="m6 8 4 4m-4 0h4V8"/></svg></button>
+        <button id="stream-fullscreen" class="stream-icon-button" type="button" aria-label="Enter fullscreen" title="Enter fullscreen" aria-keyshortcuts="F"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="stream-enter-fullscreen" d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/><path class="stream-exit-fullscreen" d="M3 9h6V3m12 6h-6V3M9 21v-6H3m12 6v-6h6"/></svg></button>
+      </div>
     </div>
   </div>
 </div>
@@ -431,7 +412,7 @@ document.getElementById('search-input').addEventListener('input',function(){
 });
 
 document.getElementById('search-input').addEventListener('keydown',e=>{
-  if(e.key==='Escape'){clearSearch()}
+  if(e.key==='Escape'&&!document.getElementById('fp-overlay').classList.contains('open')){clearSearch()}
 });
 
 // Immediately focus search on load
@@ -577,67 +558,46 @@ function openModal(id,mediaType){
     let runtime='',runtimeSecs=6120;
     if(!isTV&&d.runtime){const h=Math.floor(d.runtime/60),m=d.runtime%60;runtime=h?`${h}h ${m}m`:`${m}m`;runtimeSecs=d.runtime*60}
     else if(isTV&&d.number_of_seasons)runtime=`${d.number_of_seasons} Season${d.number_of_seasons>1?'s':''}`;
-    window.__fp={title,subtitle:year+(runtime?'  ·  '+runtime:''),backdropUrl:bdUrl,runtimeSecs};
-    inn.innerHTML=`<div class="modal-poster">${poster?`<img src="${poster}" alt="${title}">`:`<div style="width:100%;height:100%;background:#222"></div>`}<div class="modal-poster-grad"></div><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="modal-rating-badge"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#fbbf24" stroke="#fbbf24"/></svg>${rate}</div><button class="modal-play-center" onclick="event.stopPropagation();const f=window.__fp||{};if(window.openPlayer)window.openPlayer(f.title,f.subtitle,f.backdropUrl,f.runtimeSecs);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button><span class="modal-type-tag">${isTV?'SERIES':'FILM'}</span></div><div class="modal-body"><h2 class="modal-title">${title}</h2><div class="modal-meta-row">${year?`<span>${year}</span><span class="dot">·</span>`:''} ${runtime?`<span>${runtime}</span><span class="dot">·</span>`:''}<span style="color:rgba(255,255,255,.35);font-size:11px;text-transform:uppercase;letter-spacing:.08em">${isTV?'Series':'Movie'}</span></div><div class="modal-actions"><button class="modal-btn-play" onclick="event.stopPropagation();const f=window.__fp||{};if(window.openPlayer)window.openPlayer(f.title,f.subtitle,f.backdropUrl,f.runtimeSecs);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play Now</button><button class="modal-btn-secondary" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Watchlist</button></div></div>${isTV?`<div class="modal-seasons-wrap"><div class="modal-seasons-label">Episodes</div><div class="modal-season-tabs" id="modal-season-tabs">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>`<button class="modal-season-tab" data-season="${s.season_number}" onclick="loadSeason(${d.id},${s.season_number})">${s.name}</button>`).join('')}</div></div><div class="modal-episodes-list" id="modal-episodes-list"><div class="modal-ep-loading">Loading episodes…</div></div>`:''}<div style="padding:0 20px 24px">${genres?`<div class="modal-genres">${genres}</div>`:''}<p class="modal-overview">${overview}</p></div>`;
+    window.__fp={id:d.id,mediaType:type,title,subtitle:year+(runtime?'  ·  '+runtime:''),backdropUrl:bdUrl,runtimeSecs,seasons:d.seasons||[]};
+    inn.innerHTML=`<div class="modal-poster">${poster?`<img src="${poster}" alt="${title}">`:`<div style="width:100%;height:100%;background:#222"></div>`}<div class="modal-poster-grad"></div><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="modal-rating-badge"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#fbbf24" stroke="#fbbf24"/></svg>${rate}</div><button class="modal-play-center" onclick="event.stopPropagation();const f=window.__fp||{};if(window.openPlayer)window.openPlayer(f);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button><span class="modal-type-tag">${isTV?'SERIES':'FILM'}</span></div><div class="modal-body"><h2 class="modal-title">${title}</h2><div class="modal-meta-row">${year?`<span>${year}</span><span class="dot">·</span>`:''} ${runtime?`<span>${runtime}</span><span class="dot">·</span>`:''}<span style="color:rgba(255,255,255,.35);font-size:11px;text-transform:uppercase;letter-spacing:.08em">${isTV?'Series':'Movie'}</span></div><div class="modal-actions"><button class="modal-btn-play" onclick="event.stopPropagation();const f=window.__fp||{};if(window.openPlayer)window.openPlayer(f);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play Now</button><button class="modal-btn-secondary" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Watchlist</button></div></div>${isTV?`<div class="modal-seasons-wrap"><div class="modal-seasons-label">Episodes</div><div class="modal-season-tabs" id="modal-season-tabs">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>`<button class="modal-season-tab" data-season="${s.season_number}" onclick="loadSeason(${d.id},${s.season_number})">${s.name}</button>`).join('')}</div></div><div class="modal-episodes-list" id="modal-episodes-list"><div class="modal-ep-loading">Loading episodes…</div></div>`:''}<div style="padding:0 20px 24px">${genres?`<div class="modal-genres">${genres}</div>`:''}<p class="modal-overview">${overview}</p></div>`;
     ld.style.display='none';inn.style.display='block';
-    if(isTV){const seasons=(d.seasons||[]).filter(s=>s.season_number>0);if(seasons.length)loadSeason(d.id,seasons[seasons.length-1].season_number)}
+    if(isTV){const seasons=(d.seasons||[]).filter(s=>s.season_number>0);if(seasons.length)loadSeason(d.id,seasons[0].season_number)}
   }).catch(()=>{inn.innerHTML=`<div style="padding:40px;text-align:center;color:var(--muted)">Failed to load.</div>`;ld.style.display='none';inn.style.display='block'});
 }
 
 async function loadSeason(sid,snum){
+  Object.assign(window.__fp, { season: snum, episode: 1, episodes: [] });
   document.querySelectorAll('.modal-season-tab').forEach(b=>b.classList.toggle('active',+b.dataset.season===snum));
   const list=document.getElementById('modal-episodes-list');if(!list)return;
   list.innerHTML=`<div class="modal-ep-loading">Loading…</div>`;
   try{
-    const data=await tmdb(`/tv/${sid}/season/${snum}`);const eps=data.episodes||[];
+    const data=await tmdb(`/tv/${sid}/season/${snum}`);if(window.__fp?.id!==sid || window.__fp?.season!==snum)return;
+    const eps=data.episodes||[]; window.__fp.episodes=eps; window.__fp.episode=eps[0]?.episode_number||1;
     if(!eps.length){list.innerHTML=`<div class="modal-ep-loading">No episodes.</div>`;return}
     list.innerHTML=eps.map(ep=>{const thumb=ep.still_path?`https://image.tmdb.org/t/p/w300${ep.still_path}`:null,showBd=(window.__fp&&window.__fp.backdropUrl)?window.__fp.backdropUrl.replace('/original/','/w300/'):'',rt=ep.runtime?`${ep.runtime}m`:'',ad=(ep.air_date||'').slice(0,4),meta=[rt,ad].filter(Boolean).join(' · ');
-      return `<button class="modal-episode" onclick="event.stopPropagation();openEpisode(${snum},${ep.episode_number},'${(ep.name||'Episode '+ep.episode_number).replace(/'/g,"\\'")}',${ep.runtime?ep.runtime*60:2700})"><div class="modal-ep-thumb">${thumb?`<img src="${thumb}" loading="lazy">`:showBd?`<img class="ep-thumb-fallback" src="${showBd}" loading="lazy">`:`<div class="modal-ep-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div>`}<div class="modal-ep-play-overlay"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span class="modal-ep-num">E${ep.episode_number}</span></div><div class="modal-ep-info"><div class="modal-ep-title">${ep.name||'Episode '+ep.episode_number}</div>${meta?`<div class="modal-ep-meta">${meta}</div>`:''} ${ep.overview?`<div class="modal-ep-desc">${ep.overview}</div>`:''}</div></button>`;
+      return `<button class="modal-episode" onclick="event.stopPropagation();openEpisode(${snum},${ep.episode_number})"><div class="modal-ep-thumb">${thumb?`<img src="${thumb}" loading="lazy">`:showBd?`<img class="ep-thumb-fallback" src="${showBd}" loading="lazy">`:`<div class="modal-ep-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div>`}<div class="modal-ep-play-overlay"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span class="modal-ep-num">E${ep.episode_number}</span></div><div class="modal-ep-info"><div class="modal-ep-title">${ep.name||'Episode '+ep.episode_number}</div>${meta?`<div class="modal-ep-meta">${meta}</div>`:''} ${ep.overview?`<div class="modal-ep-desc">${ep.overview}</div>`:''}</div></button>`;
     }).join('');
   }catch{list.innerHTML=`<div class="modal-ep-loading">Failed to load.</div>`}
 }
 
 function closeModal(e){if(e&&e.target!==document.getElementById('modal-backdrop'))return;document.getElementById('modal-backdrop').classList.remove('open');document.body.style.overflow=''}
-function openEpisode(sn,en,name,rs){const f=window.__fp||{};document.getElementById('modal-backdrop').classList.remove('open');document.body.style.overflow='';if(window.openPlayer)window.openPlayer(f.title||'',`S${sn}  ·  E${en}  ·  ${name}`,f.backdropUrl||'',rs)}
+function openEpisode(sn, en) {
+  const f = window.__fp || {};
+  const ep = (f.episodes || []).find(item => item.episode_number === en);
+  if (window.openPlayer) window.openPlayer({ ...f, mediaType: 'tv', season: sn, episode: en, episodeName: ep?.name || `Episode ${en}` });
+}
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){if(document.getElementById('fp-overlay').classList.contains('open')){window.closePlayer&&window.closePlayer();return}const bd=document.getElementById('modal-backdrop');if(bd.classList.contains('open')){bd.classList.remove('open');document.body.style.overflow=''}}
+  if(e.key==='Escape'&&!document.getElementById('fp-overlay').classList.contains('open')){if(document.getElementById('fp-overlay').classList.contains('open')){window.closePlayer&&window.closePlayer();return}const bd=document.getElementById('modal-backdrop');if(bd.classList.contains('open')){bd.classList.remove('open');document.body.style.overflow=''}}
 });
 
 // Initial state
 showEmptyState();
 
-// PLAYER
-(function(){
-  const ov=document.getElementById('fp-overlay'),bg=document.getElementById('fp-bg'),ti=document.getElementById('fp-title'),su=document.getElementById('fp-sub'),pb=document.getElementById('fp-play'),pi=document.getElementById('fp-play-icon'),rw=document.getElementById('fp-rew'),fw=document.getElementById('fp-fwd'),pr=document.getElementById('fp-prog'),fi=document.getElementById('fp-fill'),bu=document.getElementById('fp-buf'),dt=document.getElementById('fp-dot'),tp=document.getElementById('fp-tip'),tm=document.getElementById('fp-time'),mu=document.getElementById('fp-mute'),vi=document.getElementById('fp-vol-icon'),vs=document.getElementById('fp-vol'),fs=document.getElementById('fp-fs'),cb=document.getElementById('fp-close'),tl=document.getElementById('fp-tap-l'),tr=document.getElementById('fp-tap-r'),rl=document.getElementById('fp-rip-l'),rr=document.getElementById('fp-rip-r'),ui=document.getElementById('fp-ui'),ce=document.getElementById('fp-center'),bo=document.getElementById('fp-bottom');
-  let dur=6120,cur=0,play=false,raf=null,lts=null,ht=null,drag=false,bp=0,bt=0;
-  const fmt=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`:`${m}:${String(sc).padStart(2,'0')}`};
-  function setP(v){play=v;pi.innerHTML=play?'<rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/>':'<polygon points="5 3 19 12 5 21 5 3" fill="#fff"/>';if(play){lts=null;raf=requestAnimationFrame(tick)}else cancelAnimationFrame(raf)}
-  function tick(ts){if(!play)return;if(lts!==null){const d=(ts-lts)/1000;cur=Math.min(dur,cur+d);bt=Math.min(100,(cur/dur)*100+18+Math.random()*2);bp+=(bt-bp)*.04}lts=ts;if(!drag)upUI();if(cur>=dur){cur=dur;setP(false);upUI();return}raf=requestAnimationFrame(tick)}
-  function upUI(){const p=dur?(cur/dur)*100:0;fi.style.width=p+'%';dt.style.left=p+'%';bu.style.width=bp+'%';tm.textContent=fmt(cur)+' / '+fmt(dur)}
-  function showUI(){ui.style.opacity=ce.style.opacity=bo.style.opacity='1';ui.style.pointerEvents=ce.style.pointerEvents=bo.style.pointerEvents='';clearTimeout(ht);if(play)ht=setTimeout(hideUI,3200)}
-  function hideUI(){ui.style.opacity=ce.style.opacity=bo.style.opacity='0';ui.style.pointerEvents=ce.style.pointerEvents=bo.style.pointerEvents='none'}
-  ov.addEventListener('mousemove',showUI);ov.addEventListener('touchstart',showUI,{passive:true});
-  ov.addEventListener('click',e=>{if(e.target===ov||e.target===bg){showUI();if(play)hideUI()}});
-  pb.addEventListener('click',()=>{setP(!play);showUI()});
-  rw.addEventListener('click',()=>{cur=Math.max(0,cur-10);upUI();showUI()});
-  fw.addEventListener('click',()=>{cur=Math.min(dur,cur+10);upUI();showUI()});
-  function frac(e){const r=pr.getBoundingClientRect(),cx=e.touches?e.touches[0].clientX:e.clientX;return Math.max(0,Math.min(1,(cx-r.left)/r.width))}
-  function seek(f){cur=f*dur;upUI()}
-  pr.addEventListener('mousedown',e=>{drag=true;seek(frac(e))});
-  pr.addEventListener('touchstart',e=>{drag=true;seek(frac(e))},{passive:true});
-  pr.addEventListener('mousemove',e=>{const f=frac(e);tp.textContent=fmt(f*dur);tp.style.left=(f*100)+'%';if(drag)seek(f)});
-  window.addEventListener('mousemove',e=>{if(drag)seek(frac(e))});
-  window.addEventListener('mouseup',()=>{drag=false});window.addEventListener('touchend',()=>{drag=false});
-  mu.addEventListener('click',()=>{const m=vi.innerHTML.includes('M15');vi.innerHTML=m?'<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>':'<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>';showUI()});
-  vs.addEventListener('input',()=>showUI());
-  fs.addEventListener('click',()=>{const el=document.getElementById('fp-overlay');if(!document.fullscreenElement&&!document.webkitFullscreenElement)(el.requestFullscreen||el.webkitRequestFullscreen).call(el);else(document.exitFullscreen||document.webkitExitFullscreen).call(document)});
-  function dtap(zone,ripple,dir){let taps=0,timer=null;zone.addEventListener('touchend',()=>{taps++;if(taps===1){timer=setTimeout(()=>{taps=0;setP(!play);showUI()},240)}else{clearTimeout(timer);taps=0;cur=Math.max(0,Math.min(dur,cur+(dir==='r'?10:-10)));upUI();ripple.classList.add('show');setTimeout(()=>ripple.classList.remove('show'),500)}})}
-  dtap(tl,rl,'l');dtap(tr,rr,'r');
-  document.addEventListener('keydown',e=>{if(!ov.classList.contains('open'))return;if(e.target.tagName==='INPUT')return;switch(e.key){case' ':case'k':e.preventDefault();setP(!play);showUI();break;case'ArrowLeft':e.preventDefault();cur=Math.max(0,cur-10);upUI();showUI();break;case'ArrowRight':e.preventDefault();cur=Math.min(dur,cur+10);upUI();showUI();break;case'm':case'M':mu.click();break;case'f':case'F':fs.click();break}});
-  cb.addEventListener('click',window.closePlayer=function(){setP(false);cur=0;bp=0;ov.classList.remove('open');document.body.style.overflow='';if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})});
-  window.openPlayer=function(title,subtitle,bdUrl,d){dur=d||6120;cur=0;bp=0;bt=0;ti.textContent=title||'';su.textContent=subtitle||'';bg.style.backgroundImage=bdUrl?`url(${bdUrl})`:'none';ov.classList.add('open');document.body.style.overflow='hidden';upUI();showUI();setTimeout(()=>setP(true),300)};
-})();
 </script>
+
+<script src="assets/vendor/hls.min.js"></script>
+<script src="assets/player-config.js"></script>
+<script type="module" src="assets/player.js"></script>
 </body>
 </html>

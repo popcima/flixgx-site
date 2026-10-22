@@ -105,34 +105,4 @@
 
   window.NXSections = { load: loadHomeSections };
 
-  // ─── Site / locker config (admin-controlled) ───────────────────────
-  async function loadConfig() {
-    if (!sb) return window.NXConfig;
-    try {
-      var r = await sb.from('site_config').select('*').eq('id', 1).single();
-      if (r.data) {
-        window.NXConfig.playerBaseUrl = r.data.player_base_url || '';
-        window.NXConfig.requiredOffers = r.data.required_offers;
-        window.NXConfig.lockerText = r.data.locker_text || '';
-        window.NXConfig.lockerDelay = r.data.locker_delay;
-        window.NXConfig.lockerTesting = r.data.locker_testing;
-        window.NXConfig.lockerVariant = r.data.locker_variant || '';
-        // Feed the AdBlueMedia locker so it picks these up when it initializes
-        if (window.ADBLUE_CONFIG) {
-          if (window.NXConfig.requiredOffers != null) window.ADBLUE_CONFIG.requiredOffers = window.NXConfig.requiredOffers;
-          if (window.NXConfig.lockerDelay != null) window.ADBLUE_CONFIG.lockerDelay = window.NXConfig.lockerDelay;
-          if (window.NXConfig.lockerTesting != null) window.ADBLUE_CONFIG.testing = window.NXConfig.lockerTesting;
-        }
-      }
-    } catch (e) {
-      console.warn('[NoirX] site_config load failed:', e && e.message);
-    }
-    return window.NXConfig;
-  }
-
-  window.NXConfig = {
-    load: loadConfig,
-    playerBaseUrl: '', requiredOffers: null, lockerText: '',
-    lockerDelay: null, lockerTesting: null, lockerVariant: ''
-  };
 })();

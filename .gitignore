@@ -5,3 +5,8 @@ node_modules/
 
 # Intro clips are hosted externally — not deployed via this repo
 vids/
+
+.env
+.env.*
+!.env.example
+dist/

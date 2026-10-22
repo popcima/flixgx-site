@@ -159,14 +159,12 @@
       <button class="tab active" data-tab="intros">Company Intros</button>
       <button class="tab" data-tab="overrides">★ Content Overrides</button>
       <button class="tab" data-tab="sections">▦ Home Sections</button>
-      <button class="tab" data-tab="locker">⚙ Locker</button>
       <button class="tab" data-tab="preview">↻ Content Preview</button>
     </div>
 
     <div id="tab-intros"></div>
     <div id="tab-overrides" class="hidden"></div>
     <div id="tab-sections" class="hidden"></div>
-    <div id="tab-locker" class="hidden"></div>
     <div id="tab-preview" class="hidden"></div>
   </div>
 </div>
@@ -213,7 +211,7 @@
   el('logout').addEventListener('click', async function(){ await sb.auth.signOut(); showLogin(); });
 
   // ── Tabs ───────────────────────────────────────────────────
-  var tabEls = { intros: el('tab-intros'), overrides: el('tab-overrides'), sections: el('tab-sections'), locker: el('tab-locker'), preview: el('tab-preview') };
+  var tabEls = { intros: el('tab-intros'), overrides: el('tab-overrides'), sections: el('tab-sections'), preview: el('tab-preview') };
   document.querySelectorAll('.tab').forEach(function(t){
     t.addEventListener('click', function(){
       document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
@@ -227,7 +225,6 @@
     if(name==='intros') renderIntros();
     else if(name==='overrides') renderOverrides();
     else if(name==='sections') renderSections();
-    else if(name==='locker') renderLocker();
     else if(name==='preview') renderPreview();
   }
 
@@ -608,55 +605,6 @@
         loadSecItems();
       };
     });
-  }
-
-  /* ════════════════ TAB · LOCKER SETTINGS ════════════════ */
-  function lkField(label,id,type,val,ph,hint){
-    return '<div><label>'+esc(label)+'</label>' +
-      '<input class="field" id="'+id+'" type="'+type+'" value="'+esc(val)+'" placeholder="'+esc(ph||'')+'">' +
-      (hint?'<div style="color:var(--muted);font-size:12px;margin-top:6px">'+hint+'</div>':'') + '</div>';
-  }
-  async function renderLocker(){
-    var root = tabEls.locker;
-    root.innerHTML = loadingHTML();
-    var res = await sb.from('site_config').select('*').eq('id',1).single();
-    if(res.error){ root.innerHTML = alertHTML('DB error: '+res.error.message); return; }
-    var c = res.data || {};
-    root.innerHTML =
-      '<div class="info-bar">⚙ <div>Controls the content locker across the flixgx site. Changes take effect on the next page load. <b>Test mode</b> unlocks with fake leads for previewing — set it back to Off for real visitors.</div></div>' +
-      '<div class="panel"><div class="panel-body" style="display:flex;flex-direction:column;gap:16px">' +
-        lkField('Redirect base URL','lc-base','text', c.player_base_url||'', 'https://cineby.at',
-          'On unlock the viewer is sent to <b style="color:var(--accent)">{base}/movie/{id}</b> or <b style="color:var(--accent)">{base}/tv/{id}</b>.') +
-        lkField('Offers required to unlock','lc-offers','number', c.required_offers!=null?c.required_offers:2, '2',
-          'How many offers the visitor must complete before the redirect fires.') +
-        lkField('Locker delay (seconds)','lc-delay','number', c.locker_delay!=null?c.locker_delay:5, '5',
-          'How long the intro plays before the locker appears.') +
-        '<div><label>Test mode</label>' +
-          '<select class="field" id="lc-test">' +
-            '<option value="0"'+((c.locker_testing==1)?'':' selected')+'>Off — real offers</option>' +
-            '<option value="1"'+((c.locker_testing==1)?' selected':'')+'>On — fake test leads</option>' +
-          '</select></div>' +
-        '<div><label>Locker heading text</label>' +
-          '<textarea class="field" id="lc-text" rows="3" style="resize:vertical">'+esc(c.locker_text||'Install one of our sponsor apps below to continue watching {title}.')+'</textarea>' +
-          '<div style="color:var(--muted);font-size:12px;margin-top:6px">Use <b style="color:var(--accent)">{title}</b> where the movie/show name should appear.</div></div>' +
-        '<div style="text-align:right"><button class="btn-add" id="lc-save">Save locker settings</button></div>' +
-      '</div></div>';
-    el('lc-save').onclick = async function(){
-      var btn=this; btn.disabled=true; btn.textContent='Saving…';
-      var payload = {
-        id:1,
-        player_base_url: el('lc-base').value.trim(),
-        required_offers: Math.max(1, parseInt(el('lc-offers').value)||1),
-        locker_delay: Math.max(0, parseInt(el('lc-delay').value)||0),
-        locker_testing: parseInt(el('lc-test').value)||0,
-        locker_text: el('lc-text').value,
-        updated_at: new Date().toISOString()
-      };
-      var r = await sb.from('site_config').upsert(payload);
-      if(r.error){ alert('Save failed: '+r.error.message); btn.disabled=false; btn.textContent='Save locker settings'; return; }
-      btn.textContent='✓ Saved';
-      setTimeout(function(){ renderLocker(); }, 900);
-    };
   }
 
   /* ════════════════ TAB 4 · CONTENT PREVIEW ════════════════ */

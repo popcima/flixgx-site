@@ -1,46 +1,137 @@
 {
   "_info": "NoirX content control. Add items to any section using { \"id\": TMDB_ID, \"media_type\": \"movie\" } or \"tv\". Leave a section as [] to use live TMDB data instead. Find any TMDB ID at themoviedb.org — the number in the URL is the id.",
-
-  "lockerDelay": 5,
-
   "trending_week": [
-    { "id": 1315772, "media_type": "movie" },
-    { "id": 872585, "media_type": "movie" },
-    { "id": 76600,  "media_type": "movie" },
-    { "id": 361743, "media_type": "movie" },
-    { "id": 634649, "media_type": "movie" },
-    { "id": 100088, "media_type": "tv"    },
-    { "id": 66732,  "media_type": "tv"    },
-    { "id": 94997,  "media_type": "tv"    },
-    { "id": 136315, "media_type": "tv"    },
-    { "id": 95396,  "media_type": "tv"    }
+    {
+      "id": 1315772,
+      "media_type": "movie"
+    },
+    {
+      "id": 872585,
+      "media_type": "movie"
+    },
+    {
+      "id": 76600,
+      "media_type": "movie"
+    },
+    {
+      "id": 361743,
+      "media_type": "movie"
+    },
+    {
+      "id": 634649,
+      "media_type": "movie"
+    },
+    {
+      "id": 100088,
+      "media_type": "tv"
+    },
+    {
+      "id": 66732,
+      "media_type": "tv"
+    },
+    {
+      "id": 94997,
+      "media_type": "tv"
+    },
+    {
+      "id": 136315,
+      "media_type": "tv"
+    },
+    {
+      "id": 95396,
+      "media_type": "tv"
+    }
   ],
-
   "trending_today": [
-    { "id": 346698, "media_type": "movie" },
-    { "id": 414906, "media_type": "movie" },
-    { "id": 157336, "media_type": "movie" },
-    { "id": 27205,  "media_type": "movie" },
-    { "id": 155,    "media_type": "movie" },
-    { "id": 299534, "media_type": "movie" },
-    { "id": 119051, "media_type": "tv"    },
-    { "id": 1396,   "media_type": "tv"    },
-    { "id": 1399,   "media_type": "tv"    },
-    { "id": 60735,  "media_type": "tv"    }
+    {
+      "id": 346698,
+      "media_type": "movie"
+    },
+    {
+      "id": 414906,
+      "media_type": "movie"
+    },
+    {
+      "id": 157336,
+      "media_type": "movie"
+    },
+    {
+      "id": 27205,
+      "media_type": "movie"
+    },
+    {
+      "id": 155,
+      "media_type": "movie"
+    },
+    {
+      "id": 299534,
+      "media_type": "movie"
+    },
+    {
+      "id": 119051,
+      "media_type": "tv"
+    },
+    {
+      "id": 1396,
+      "media_type": "tv"
+    },
+    {
+      "id": 1399,
+      "media_type": "tv"
+    },
+    {
+      "id": 60735,
+      "media_type": "tv"
+    }
   ],
-
   "popular_movies": [
-    { "id": 872585, "media_type": "movie" },
-    { "id": 693134, "media_type": "movie" },
-    { "id": 346698, "media_type": "movie" },
-    { "id": 76600,  "media_type": "movie" },
-    { "id": 361743, "media_type": "movie" },
-    { "id": 634649, "media_type": "movie" },
-    { "id": 414906, "media_type": "movie" },
-    { "id": 157336, "media_type": "movie" },
-    { "id": 27205,  "media_type": "movie" },
-    { "id": 155,    "media_type": "movie" },
-    { "id": 299534, "media_type": "movie" },
-    { "id": 284054, "media_type": "movie" }
+    {
+      "id": 872585,
+      "media_type": "movie"
+    },
+    {
+      "id": 693134,
+      "media_type": "movie"
+    },
+    {
+      "id": 346698,
+      "media_type": "movie"
+    },
+    {
+      "id": 76600,
+      "media_type": "movie"
+    },
+    {
+      "id": 361743,
+      "media_type": "movie"
+    },
+    {
+      "id": 634649,
+      "media_type": "movie"
+    },
+    {
+      "id": 414906,
+      "media_type": "movie"
+    },
+    {
+      "id": 157336,
+      "media_type": "movie"
+    },
+    {
+      "id": 27205,
+      "media_type": "movie"
+    },
+    {
+      "id": 155,
+      "media_type": "movie"
+    },
+    {
+      "id": 299534,
+      "media_type": "movie"
+    },
+    {
+      "id": 284054,
+      "media_type": "movie"
+    }
   ]
 }
