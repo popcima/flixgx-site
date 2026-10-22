@@ -1,5 +1,8 @@
 import 'dotenv/config';
 import { createSite } from './site.js';
+import { configureUpstreamProxy } from './api/network.js';
+
+configureUpstreamProxy(process.env.UPSTREAM_PROXY_URL || '');
 
 const port = Number(process.env.PORT || 8788), host = process.env.HOST || '127.0.0.1';
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT');

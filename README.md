@@ -71,6 +71,24 @@ The included `render.yaml` creates one Docker web service with a `/health` check
 
 The Blueprint selects the Free compute plan for initial verification. Render's [Free service limits](https://render.com/docs/free) include idle shutdown and restrictions on heavy outbound traffic. Video relaying consumes outbound bandwidth, and overages can be billed when a payment method is present. Choose hosting capacity and a bandwidth budget appropriate to public traffic before a wider launch. Keep one API instance while playback sessions remain in memory.
 
+### Optional outbound proxy
+
+If the video provider rejects the server's connection, test a provider-approved HTTP(S) forward proxy. Set `UPSTREAM_PROXY_URL` privately in Render's Environment settings, then deploy:
+
+```dotenv
+UPSTREAM_PROXY_URL=http://username:password@proxy-host:port
+```
+
+Use a fixed proxy endpoint. Percent-encode special characters in the username/password. A URL such as `/manifest.mpd?url=...` is a media relay and cannot be used here. Keep credentials out of GitHub, the frontend and screenshots. Leave this variable empty to connect directly.
+
+The API sends source lookups, playlists, media segments and subtitles through the configured proxy, preserving one outgoing connection identity for IP-bound streams. It validates destination DNS and pins the checked public IP in CONNECT, with certificate verification against the original hostname. Proxy failure does not silently switch to a direct connection. `/health` reports only `proxyConfigured: true/false`; it does not prove provider access or disclose the endpoint.
+
+Provider errors include safe `error.upstream` diagnostics (`stage`, HTTP `status`, and whether a Cloudflare challenge header was present). No signed URLs, cookies or response bodies are included. `source_lookup` HTTP 403 means the initial source lookup was rejected; it does not establish an IP block by itself.
+
+[Webshare's free plan](https://help.webshare.io/en/articles/8375287-do-you-offer-proxies-for-free) offers 10 shared datacenter proxies and 1 GB/month as checked on October 22, 2026. It requires an account. Shared addresses can also be blocked, and video quickly uses the allowance. Verify a movie and an episode through Render before relying on a proxy; no free endpoint has been verified for this provider yet.
+
+Services created from a public Git URL require a manual deployment even after a GitHub push. Check that Render's live commit matches the desired repository revision; see [Render's deploy documentation](https://render.com/docs/deploys).
+
 ## Endpoints
 
 These routes are intentionally public for visitors to this website and inherit API validation, CORS and rate limits:

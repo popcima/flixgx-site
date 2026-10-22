@@ -5,7 +5,7 @@ import { pipeline } from 'node:stream/promises';
 import { ApiError } from './errors.js';
 import { validateTarget, MEDIA_HOSTS, resolveProvider } from './provider.js';
 import { SessionStore, Resolver } from './sessions.js';
-import { request, requireOK, readBody } from './network.js';
+import { request, requireOK, readBody, hasUpstreamProxy } from './network.js';
 import { rewriteManifest, m3uPlaylist } from './hls.js';
 import { tmdb } from './tmdb.js';
 import { fetchSubtitle } from './subtitles.js';
@@ -77,7 +77,7 @@ export function createApp(config, { provider = resolveProvider, upstream = reque
       }
       if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
       if (req.method !== 'GET') { res.setHeader('Allow', 'GET, OPTIONS'); throw new ApiError(405, 'METHOD_NOT_ALLOWED', 'Use GET.'); }
-      if (url.pathname === '/health') return send(res, 200, { ok: true, provider: 'vidpro', tmdbConfigured: Boolean(config.tmdbToken) });
+      if (url.pathname === '/health') return send(res, 200, { ok: true, provider: 'vidpro', tmdbConfigured: Boolean(config.tmdbToken), proxyConfigured: hasUpstreamProxy() });
       const subtitleMatch = url.pathname.match(/^\/v1\/subtitles\/([a-f0-9]{48})\/([a-f0-9]{24})\.vtt$/);
       if (subtitleMatch) {
         const session = store.get(subtitleMatch[1]), resource = session.resources.get(subtitleMatch[2]);

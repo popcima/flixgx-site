@@ -2,6 +2,15 @@ import https from 'node:https';
 import dns from 'node:dns';
 import ipaddr from 'ipaddr.js';
 import { ApiError } from './errors.js';
+import { PublicProxyAgent } from './proxy.js';
+
+let upstreamAgent;
+export function configureUpstreamProxy(value = '') {
+  const next = value ? new PublicProxyAgent(value, { lookupTarget: publicLookup }) : undefined;
+  upstreamAgent?.destroy();
+  upstreamAgent = next;
+}
+export const hasUpstreamProxy = () => Boolean(upstreamAgent);
 
 export function isPublicAddress(value) {
   try { return ipaddr.process(value).range() === 'unicast'; } catch { return false; }
@@ -33,7 +42,7 @@ function publicLookup(host, options, callback) {
 export async function request(value, { hosts, headers = {}, timeout = 15000, redirects = 3 } = {}) {
   const url = allowedURL(value, hosts);
   const response = await new Promise((resolve, reject) => {
-    const req = https.get(url, { headers, lookup: publicLookup }, resolve);
+    const req = https.get(url, { headers, lookup: publicLookup, ...(upstreamAgent ? { agent: upstreamAgent } : {}) }, resolve);
     const timer = setTimeout(() => req.destroy(new ApiError(504, 'UPSTREAM_TIMEOUT', 'Upstream request timed out.')), timeout);
     req.on('close', () => clearTimeout(timer));
     req.on('error', reject);
