@@ -20,6 +20,21 @@ npm start
 
 Open http://localhost:8788. The site and its playback server run together. `npm test` runs the automated API and integration checks.
 
+## Free temporary Cloudflare test
+
+For a short test, use a [Cloudflare Quick Tunnel](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/). It needs no Cloudflare account or credit card. Install [cloudflared](https://developers.cloudflare.com/tunnel/downloads/) (on macOS: `brew install cloudflared`), then run:
+
+```sh
+npm ci
+npm run test:cloudflare
+```
+
+Open the printed `https://…trycloudflare.com` preview. It runs the site and playback API together, including movies, TV episodes, quality selection and subtitles when supplied by the provider. It automatically uses the tunnel origin for media URLs. Keep `assets/player-config.js` at its default `apiBaseUrl: ''` for this preview. `CLOUDFLARED_BIN` optionally specifies the installed executable's path.
+
+Anyone with this temporary URL can access the preview. Keep the terminal and your Mac running; Ctrl+C stops both the tunnel and test server. The hostname changes on restart, and Cloudflare provides no uptime guarantee. Quick Tunnels allow up to 200 concurrent requests; the API's smaller limits still apply. Video is relayed through your computer and uses its bandwidth.
+
+This is a development preview, not a Workers deployment. It does not change GitHub Pages, DNS or `STREAM_API_ORIGIN`. Use the preview URL for testing and configure a stable API host before connecting the production domain.
+
 ## Deploy the site and server together
 
 Use a host that runs a persistent Node.js service or the included Dockerfile. Set:

@@ -6,6 +6,7 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "start": "node server/index.js",
+    "test:cloudflare": "node scripts/test-cloudflare.js",
     "test": "node --test test/api/*.test.js test/site.test.js",
     "build:pages": "node scripts/build-pages.js"
   },
