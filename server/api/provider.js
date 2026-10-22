@@ -5,6 +5,14 @@ import { inspectManifest } from './hls.js';
 export const PROVIDER_HOSTS = ['vixsrc.to'];
 export const MEDIA_HOSTS = ['vixsrc.to', 'youngbridge89.boats', 'frozenlagoon85.boats', 'vix-content.net'];
 
+function checkProviderResponse(response, stage, target) {
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    // Log only the failing step and title ID, never signed URLs, headers or bodies.
+    console.warn(JSON.stringify({ event: 'provider_request_failed', stage, status: response.statusCode, ...target }));
+  }
+  requireOK(response);
+}
+
 export function validateTarget(type, id, season, episode) {
   if (!['movie', 'tv'].includes(type) || !/^[1-9]\d{0,9}$/.test(String(id))) {
     throw new ApiError(400, 'INVALID_TARGET', 'Use movie or tv with a positive numeric TMDB ID.');
@@ -33,7 +41,7 @@ export async function resolveProvider(target) {
   const path = target.type === 'movie' ? `movie/${target.tmdbId}` : `tv/${target.tmdbId}/${target.season}/${target.episode}`;
   const pageURL = `https://vixsrc.to/${path}`;
   const api = await request(`https://vixsrc.to/api/${path}`, { hosts: PROVIDER_HOSTS, headers: { Referer: pageURL, Accept: 'application/json' } });
-  requireOK(api);
+  checkProviderResponse(api, 'source_lookup', target);
   let data;
   try { data = JSON.parse((await readBody(api)).toString()); } catch (error) {
     if (error instanceof ApiError) throw error;
@@ -42,12 +50,12 @@ export async function resolveProvider(target) {
   if (typeof data.src !== 'string') throw new ApiError(404, 'SOURCE_NOT_FOUND', 'Provider has no source for this title or episode.');
   const embed = allowedURL(new URL(data.src, pageURL).href, PROVIDER_HOSTS).href;
   const player = await request(embed, { hosts: PROVIDER_HOSTS, headers: { Referer: pageURL } });
-  requireOK(player);
+  checkProviderResponse(player, 'player_configuration', target);
   const parsed = parsePlayer((await readBody(player)).toString());
   if (parsed.expiresAt <= Date.now() + 60000) throw new ApiError(502, 'EXPIRED_SOURCE', 'Provider returned an expired stream; try again.');
   const headers = { Referer: embed, Origin: 'https://vixsrc.to' };
   const master = await request(parsed.url, { hosts: PROVIDER_HOSTS, headers });
-  requireOK(master);
+  checkProviderResponse(master, 'master_playlist', target);
   const manifest = (await readBody(master)).toString();
   return { ...parsed, url: master.finalURL, manifest, headers, pageURL, ...inspectManifest(manifest, master.finalURL) };
 }
