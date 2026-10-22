@@ -4,13 +4,17 @@ import { inspectManifest } from './hls.js';
 
 export const PROVIDER_HOSTS = ['vixsrc.to'];
 export const MEDIA_HOSTS = ['vixsrc.to', 'youngbridge89.boats', 'frozenlagoon85.boats', 'vix-content.net'];
+const CLIENT_HEADERS = { 'User-Agent': 'Mozilla/5.0 (compatible; FlixGX/1.0)', 'Accept-Language': 'en-US,en;q=0.9' };
 
 function checkProviderResponse(response, stage, target) {
-  if (response.statusCode < 200 || response.statusCode >= 300) {
-    // Log only the failing step and title ID, never signed URLs, headers or bodies.
-    console.warn(JSON.stringify({ event: 'provider_request_failed', stage, status: response.statusCode, ...target }));
+  try { requireOK(response); } catch (error) {
+    // Safe diagnostics remain available when the hosting platform's logs are down.
+    // Never include signed URLs, response bodies, cookies or authorization headers.
+    const upstream = { stage, status: response.statusCode, challenge: response.headers?.['cf-mitigated'] === 'challenge' };
+    console.warn(JSON.stringify({ event: 'provider_request_failed', ...upstream, ...target }));
+    if (error instanceof ApiError) error.upstream = upstream;
+    throw error;
   }
-  requireOK(response);
 }
 
 export function validateTarget(type, id, season, episode) {
@@ -40,7 +44,7 @@ export function parsePlayer(html) {
 export async function resolveProvider(target) {
   const path = target.type === 'movie' ? `movie/${target.tmdbId}` : `tv/${target.tmdbId}/${target.season}/${target.episode}`;
   const pageURL = `https://vixsrc.to/${path}`;
-  const api = await request(`https://vixsrc.to/api/${path}`, { hosts: PROVIDER_HOSTS, headers: { Referer: pageURL, Accept: 'application/json' } });
+  const api = await request(`https://vixsrc.to/api/${path}`, { hosts: PROVIDER_HOSTS, headers: { ...CLIENT_HEADERS, Referer: pageURL, Accept: 'application/json' } });
   checkProviderResponse(api, 'source_lookup', target);
   let data;
   try { data = JSON.parse((await readBody(api)).toString()); } catch (error) {
@@ -49,11 +53,11 @@ export async function resolveProvider(target) {
   }
   if (typeof data.src !== 'string') throw new ApiError(404, 'SOURCE_NOT_FOUND', 'Provider has no source for this title or episode.');
   const embed = allowedURL(new URL(data.src, pageURL).href, PROVIDER_HOSTS).href;
-  const player = await request(embed, { hosts: PROVIDER_HOSTS, headers: { Referer: pageURL } });
+  const player = await request(embed, { hosts: PROVIDER_HOSTS, headers: { ...CLIENT_HEADERS, Referer: pageURL, Accept: 'text/html' } });
   checkProviderResponse(player, 'player_configuration', target);
   const parsed = parsePlayer((await readBody(player)).toString());
   if (parsed.expiresAt <= Date.now() + 60000) throw new ApiError(502, 'EXPIRED_SOURCE', 'Provider returned an expired stream; try again.');
-  const headers = { Referer: embed, Origin: 'https://vixsrc.to' };
+  const headers = { ...CLIENT_HEADERS, Referer: embed, Origin: 'https://vixsrc.to' };
   const master = await request(parsed.url, { hosts: PROVIDER_HOSTS, headers });
   checkProviderResponse(master, 'master_playlist', target);
   const manifest = (await readBody(master)).toString();

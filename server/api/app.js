@@ -117,7 +117,8 @@ export function createApp(config, { provider = resolveProvider, upstream = reque
       const status = error instanceof ApiError ? error.status : 502;
       if (status === 429) res.setHeader('Retry-After', '60');
       send(res, status, { error: { code: error instanceof ApiError ? error.code : 'UPSTREAM_UNAVAILABLE',
-        message: error instanceof ApiError ? error.message : 'An upstream request failed. Try again shortly.' } });
+        message: error instanceof ApiError ? error.message : 'An upstream request failed. Try again shortly.',
+        ...(error instanceof ApiError && error.upstream ? { upstream: error.upstream } : {}) } });
     }
   });
 }
