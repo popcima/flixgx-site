@@ -4,6 +4,7 @@ const $ = id => document.getElementById(`stream-${id}`);
 const overlay = document.getElementById('fp-overlay'), video = document.getElementById('fp-video');
 let hls, generation = 0, episodeRequest = 0, controller, currentTitle, returnFocus, previousOverflow;
 let prepared = null, playRequestedAt = 0, sessionRecoveryAvailable = true;
+let startupQualityInstance = null;
 let sourceSubtitles = [], subtitleTracks = [], nativeActive = false, preference = null, background = [];
 try { preference = readPreference(localStorage); } catch { /* Private browsing may disable storage. */ }
 const options = (element, values) => element.replaceChildren(...values.map(([value, label]) => {
@@ -247,6 +248,7 @@ detectPip(); updateVolume(); updateMediaControls();
 
 function resetMedia() {
   clearPreparation();
+  startupQualityInstance = null; delete overlay.dataset.qualityPhase;
   currentTitle = null; closeMenus(); clearTimeout(hideTimer); setBuffering(false); playbackError = false;
   $('message').hidden = true; $('episodes-toggle').hidden = true; overlay.classList.remove('controls-hidden', 'is-seeking');
   controller?.abort(); controller = null; nativeActive = false;
@@ -316,6 +318,11 @@ function playVideo(current, resumeAt = 0) {
     if (current === generation && error.name !== 'AbortError') status('Ready. Press Play in the video to start.');
   });
 }
+function updateQualityLabel(instance, level = instance.currentLevel) {
+  const auto = $('quality').querySelector('option[value="-1"]');
+  if (auto) auto.textContent = instance.autoLevelEnabled && instance.levels[level]?.height
+    ? `Auto (${instance.levels[level].height}p)` : 'Auto';
+}
 
 const normalizedTitle = metadata => ({ ...metadata,
   season: Number(metadata?.season ?? metadata?.seasons?.find(s => s.season_number > 0)?.season_number ?? 1),
@@ -381,10 +388,17 @@ async function loadMedia(title, current, { refresh = false, resumeAt = 0 } = {})
       const instance = hls = new Hls({ startLevel: 0, testBandwidth: false,
         maxBufferLength: preparing ? 4 : 15, maxMaxBufferLength: preparing ? 8 : 30,
         renderTextTracksNatively: true });
+      // Keep the first buffer small even if preparation finishes before Play.
+      instance.autoLevelCapping = 0; startupQualityInstance = instance;
+      overlay.dataset.qualityPhase = 'startup';
       instance.on(Hls.Events.MANIFEST_PARSED, () => {
         options($('quality'), [[-1, 'Auto'], ...instance.levels.map((level, i) => [i, `${level.height}p`])]);
         $('quality').disabled = instance.levels.length < 2;
         playVideo(current, resumeAt);
+      });
+      instance.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+        if (current !== generation || hls !== instance) return;
+        updateQualityLabel(instance, data.level);
       });
       instance.on(Hls.Events.AUDIO_TRACKS_UPDATED, (_, data) => {
         options($('audio'), data.audioTracks.map((t, i) => [i, t.name || t.lang || `Audio ${i + 1}`]));
@@ -473,6 +487,12 @@ $('close').addEventListener('click', window.closePlayer);
 $('retry').addEventListener('click', () => window.openPlayer(currentTitle, { refresh: true, resumeAt: video.currentTime }));
 video.addEventListener('playing', () => {
   if (!currentTitle) return;
+  if (hls && startupQualityInstance === hls) {
+    startupQualityInstance = null;
+    hls.autoLevelCapping = -1; overlay.dataset.qualityPhase = 'auto';
+    // Upgrade at a segment boundary without flushing the frame being played.
+    if (Number($('quality').value) === -1) hls.nextLevel = -1;
+  }
   status('Playing'); scheduleHide();
   if (!overlay.dataset.startupMs && playRequestedAt) {
     const current = generation, started = playRequestedAt;
@@ -484,7 +504,14 @@ video.addEventListener('pause', () => { if (currentTitle && video.getAttribute('
 video.addEventListener('waiting', () => { if (currentTitle && !playbackError) status('Buffering…'); });
 video.addEventListener('ended', () => { if (currentTitle) { status(currentTitle.mediaType === 'tv' ? 'Episode finished. Choose another episode to continue.' : 'Movie finished.'); showChrome(); } });
 video.addEventListener('error', () => { if (nativeActive && currentTitle) status('The stream could not play. Retry to refresh it.', true); });
-$('quality').addEventListener('change', () => { if (hls) hls.currentLevel = Number($('quality').value); });
+$('quality').addEventListener('change', () => {
+  if (!hls) return;
+  startupQualityInstance = null; hls.autoLevelCapping = -1;
+  const level = Number($('quality').value);
+  overlay.dataset.qualityPhase = level === -1 ? 'auto' : 'manual';
+  hls.nextLevel = level;
+  updateQualityLabel(hls);
+});
 $('audio').addEventListener('change', () => { if (hls) hls.audioTrack = Number($('audio').value); });
 $('subtitles').addEventListener('change', () => {
   const index = Number($('subtitles').value), track = subtitleTracks[index];
