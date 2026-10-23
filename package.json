@@ -9,6 +9,8 @@
   "scripts": {
     "start": "node server/index.js",
     "test:cloudflare": "node scripts/test-cloudflare.js",
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "wrangler deploy",
     "test": "node --test test/api/*.test.js test/site.test.js",
     "build:pages": "node scripts/build-pages.js"
   },
@@ -16,6 +18,10 @@
     "dotenv": "18.0.9",
     "hls.js": "1.7.3",
     "https-proxy-agent": "7.0.6",
-    "ipaddr.js": "2.5.0"
+    "ipaddr.js": "2.5.0",
+    "tunnelfetch": "1.13.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.152.0"
   }
 }

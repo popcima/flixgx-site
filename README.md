@@ -20,7 +20,51 @@ npm start
 
 Open http://localhost:8788. The site and its playback server run together. `npm test` runs the automated API and integration checks.
 
-## Free temporary Cloudflare test
+## Host the API on Cloudflare Free
+
+The permanent Cloudflare implementation runs with your Mac off. `wrangler.jsonc` deploys the `flixgx-api` Worker and binds `PLAYBACK_API` to the `FlixGXAPI` SQLite Durable Object. All requests use one Object named `playback-v1`; it handles provider connections, video relaying and persistent playback sessions. The frontend can remain on GitHub Pages.
+
+The checked-in configuration targets `https://flixgx-api.muse-cloud.workers.dev`. This address is a deployment target, not a claim that a particular deployment has passed playback verification. For another Cloudflare account, update `account_id` and `PUBLIC_BASE_URL` to match that account's assigned Workers address.
+
+Install dependencies and authenticate Wrangler:
+
+```sh
+npm ci
+npx wrangler login
+```
+
+The current Workers transport requires a working HTTP(S) forward proxy. Enter its URL through Wrangler's private prompt, then deploy:
+
+```sh
+npx wrangler secret put UPSTREAM_PROXY_URL
+npm run deploy:worker
+```
+
+Use the same proxy format described below, such as `http://username:password@proxy-host:port`. This Workers adapter does not fall back to a direct connection when the setting is missing or the proxy fails. Do not commit proxy credentials. Set `API_KEY` through `npx wrangler secret put API_KEY` if another server needs the protected `/v1` API; `TMDB_READ_TOKEN` is optional for backend metadata/search. The public website's TMDB-ID playback routes do not require that TMDB token.
+
+For local Worker development, create a git-ignored `.dev.vars` file:
+
+```dotenv
+UPSTREAM_PROXY_URL=http://your-proxy-host:port
+PUBLIC_BASE_URL=http://localhost:8787
+CORS_ORIGINS=http://localhost:8788
+```
+
+Then run `npm run dev:worker`. Local development still runs on your computer; `npm run deploy:worker` publishes the hosted service. Keep the deployed `PUBLIC_BASE_URL` equal to its HTTPS origin and set `CORS_ORIGINS` to the exact frontend origins.
+
+Before switching the website, verify `/health`, a movie and a TV playback request, the returned master/variant playlists, an actual segment, subtitles, and playback in a browser. Then set the GitHub repository variable `STREAM_API_ORIGIN` to the verified Worker origin and run the Pages deployment workflow. The player and its controls do not need to change.
+
+### Cloudflare runtime and free limits
+
+An ordinary free Worker has a 10 ms CPU budget. The Durable Object's documented default is 30 seconds, so TLS and media processing run inside the Object; the outer Worker only routes requests and forwards the trusted client IP. [Worker limits](https://developers.cloudflare.com/workers/platform/limits/), [Durable Object limits](https://developers.cloudflare.com/durable-objects/platform/limits/)
+
+The current free allowances include 100,000 Worker requests/day and a separate 100,000 Durable Object requests/day. Each playlist, segment and subtitle request counts; these are not movie-play allowances. SQLite storage includes 100,000 row writes/day and 5 million row reads/day, and Objects have 13,000 GB-seconds/day of active duration. Exceeding a free allowance causes operations to fail until the allowance resets; this configuration does not upgrade the plan. [Worker limits](https://developers.cloudflare.com/workers/platform/limits/), [Durable Object pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/)
+
+Registering a new playback resource writes its row and updates the session's resource counter; indexes, session changes and later cleanup also use storage operations. Large playlists and frequent fresh resolutions can therefore exhaust the write allowance before the request allowance. One Object shares active duration across concurrent requests. The existing caps of 128 sessions, four source resolutions and 24 media requests still apply; this setup is intended for the current small test.
+
+The Workers transport pins `tunnelfetch` **1.13.0** and keeps certificate verification enabled using its bundled root store. That package implements TLS and certificate validation in application code and reports that it has not had an external security audit. Successful playback tests do not replace an audit. Review security fixes and root-store updates when maintaining this dependency; never disable certificate validation to fix a connection error. See the [package's security and trust documentation](https://github.com/latentharbor/tunnelfetch).
+
+## Free temporary Cloudflare tunnel
 
 For a short test, use a [Cloudflare Quick Tunnel](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/). It needs no Cloudflare account or credit card. Install [cloudflared](https://developers.cloudflare.com/tunnel/downloads/) (on macOS: `brew install cloudflared`), then run:
 
@@ -33,7 +77,7 @@ Open the printed `https://…trycloudflare.com` preview. It runs the site and pl
 
 Anyone with this temporary URL can access the preview. Keep the terminal and your Mac running; Ctrl+C stops both the tunnel and test server. The hostname changes on restart, and Cloudflare provides no uptime guarantee. Quick Tunnels allow up to 200 concurrent requests; the API's smaller limits still apply. Video is relayed through your computer and uses its bandwidth.
 
-This is a development preview, not a Workers deployment. It does not change GitHub Pages, DNS or `STREAM_API_ORIGIN`. Use the preview URL for testing and configure a stable API host before connecting the production domain.
+This is a separate development preview from the hosted Worker described above. It does not change GitHub Pages, DNS or `STREAM_API_ORIGIN`. Use its preview URL for testing while your computer is running.
 
 ## Deploy the site and server together
 
@@ -49,9 +93,9 @@ Install with `npm ci --omit=dev` and start with `npm start`. Leave `assets/playe
 
 ## Keep the frontend on GitHub Pages
 
-GitHub Pages serves static files; it cannot run the playback API. Deploy this Node service separately, then:
+GitHub Pages serves static files; it cannot run the playback API. Deploy either the Cloudflare Worker above or the Node service separately, then:
 
-1. Set the backend's `PUBLIC_BASE_URL` to its HTTPS address and `HOST=0.0.0.0`.
+1. Set the backend's `PUBLIC_BASE_URL` to its HTTPS address. For the Node service, also set `HOST=0.0.0.0`.
 2. Set backend `CORS_ORIGINS=https://flixgx.com,https://www.flixgx.com` (and any other exact frontend origin).
 3. Set the GitHub repository variable `STREAM_API_ORIGIN` to the backend HTTPS origin. The updated Pages workflow inserts it into the frontend config and uploads only static files.
 
@@ -71,7 +115,7 @@ The included `render.yaml` creates one Docker web service with a `/health` check
 
 The Blueprint selects the Free compute plan for initial verification. Render's [Free service limits](https://render.com/docs/free) include idle shutdown and restrictions on heavy outbound traffic. Video relaying consumes outbound bandwidth, and overages can be billed when a payment method is present. Choose hosting capacity and a bandwidth budget appropriate to public traffic before a wider launch. Keep one API instance while playback sessions remain in memory.
 
-### Optional outbound proxy
+### Node outbound proxy settings
 
 If the video provider rejects the server's connection, test a provider-approved HTTP(S) forward proxy. Set `UPSTREAM_PROXY_URL` privately in Render's Environment settings, then deploy:
 
@@ -85,7 +129,7 @@ The API sends source lookups, playlists, media segments and subtitles through th
 
 Provider errors include safe `error.upstream` diagnostics (`stage`, HTTP `status`, and whether a Cloudflare challenge header was present). No signed URLs, cookies or response bodies are included. `source_lookup` HTTP 403 means the initial source lookup was rejected; it does not establish an IP block by itself.
 
-[Webshare's free plan](https://help.webshare.io/en/articles/8375287-do-you-offer-proxies-for-free) offers 10 shared datacenter proxies and 1 GB/month as checked on October 22, 2026. It requires an account. Shared addresses can also be blocked, and video quickly uses the allowance. Verify a movie and an episode through Render before relying on a proxy; no free endpoint has been verified for this provider yet.
+A [ProxyScrape free-list](https://proxyscrape.com/free-proxy-list) endpoint was previously verified with movie, TV and subtitle playback on Render. Public endpoints can change or stop working, so repeat these checks after changing the proxy. [Webshare's free plan](https://help.webshare.io/en/articles/8375287-do-you-offer-proxies-for-free) offers 10 shared datacenter proxies and 1 GB/month as checked on October 22, 2026; it requires an account. Shared addresses can also be blocked, and video quickly uses that allowance.
 
 Services created from a public Git URL require a manual deployment even after a GitHub push. Check that Render's live commit matches the desired repository revision; see [Render's deploy documentation](https://render.com/docs/deploys).
 
@@ -109,15 +153,15 @@ GET /v1/playlist/movie/98.m3u
 GET /v1/playlist/tv/1396/1/1.m3u
 ```
 
-Without `API_KEY`, the server uses an internal random key; website playback still works. Media and subtitle URLs carry opaque, expiring session IDs and need no authorization header. CORS is a browser restriction, not authentication; the public playback route can be called by non-browser clients. For a members-only site, put your existing login/session check before `/api/playback`.
+Without `API_KEY`, the server uses an internal random key; website playback still works. The Node server creates this key at startup; the Cloudflare Object stores its generated key in SQLite across restarts. Media and subtitle URLs carry opaque, expiring session IDs and need no authorization header. CORS is a browser restriction, not authentication; the public playback route can be called by non-browser clients. For a members-only site, put your existing login/session check before `/api/playback`.
 
 ## Runtime limits
 
 - TMDB supplies catalog metadata and IDs; the separate Vidpro provider supplies the streams. Catalog presence does not guarantee a playable stream.
 - This implementation integrates the observed Vidpro provider flow. Upstream availability and formats can change. CDN URLs are discovered only from verified provider playlists and allowed for that playback session. HTTPS, host limits and DNS checks still block private-network access. A redirect to a host absent from those playlists needs verification before adding it to `EXTRA_MEDIA_HOSTS`.
 - Subtitle languages, audio and qualities vary by title. HLS subtitles play through the media manifest; VTT download supports the observed single-file subtitle playlists and reports unsupported formats rather than returning broken subtitles.
-- Sessions are in memory and expire after at most six hours. A server restart invalidates existing URLs; Retry resolves them again. Multiple instances need sticky routing or a shared session implementation.
-- The server allows four concurrent resolutions, 24 media requests and 128 playback sessions. It relays video bytes, so hosting bandwidth matters. API rate limiting is 60 resolutions/minute per connection IP; behind a reverse proxy, visitors may share that limit. Configure suitable edge limits for a larger deployment.
+- Sessions expire after at most six hours, or earlier when the provider source expires. The Node server keeps them in memory, so a restart invalidates its URLs; Retry resolves them again. The Cloudflare implementation persists sessions and resource references in SQLite and removes them on expiry. Node deployments with multiple instances need sticky routing or shared state.
+- The server allows four concurrent resolutions, 24 media requests and 128 playback sessions. It relays video bytes, so hosting bandwidth matters. API rate limiting is 60 requests/minute per IP for resolution/metadata routes. Node uses the connection IP, so visitors behind a reverse proxy may share that limit; the Worker forwards Cloudflare's client IP and replaces any client-supplied internal IP header. Configure suitable edge limits for a larger deployment.
 - Chromium playback is verified locally. Native Safari/iOS support is implemented but needs testing on the target devices.
 
 The provider was derived from the earlier repository/site analysis. See the accompanying `autoembed-api` deliverable for that analysis and the standalone API demo.

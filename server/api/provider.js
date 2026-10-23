@@ -41,10 +41,10 @@ export function parsePlayer(html) {
   return { url: url.href, expiresAt: Number(params.get('expires')) * 1000 };
 }
 
-export async function resolveProvider(target) {
+export async function resolveProvider(target, { upstream = request } = {}) {
   const path = target.type === 'movie' ? `movie/${target.tmdbId}` : `tv/${target.tmdbId}/${target.season}/${target.episode}`;
   const pageURL = `https://vixsrc.to/${path}`;
-  const api = await request(`https://vixsrc.to/api/${path}`, { hosts: PROVIDER_HOSTS, headers: { ...CLIENT_HEADERS, Referer: pageURL, Accept: 'application/json' } });
+  const api = await upstream(`https://vixsrc.to/api/${path}`, { hosts: PROVIDER_HOSTS, headers: { ...CLIENT_HEADERS, Referer: pageURL, Accept: 'application/json' } });
   checkProviderResponse(api, 'source_lookup', target);
   let data;
   try { data = JSON.parse((await readBody(api)).toString()); } catch (error) {
@@ -53,12 +53,12 @@ export async function resolveProvider(target) {
   }
   if (typeof data.src !== 'string') throw new ApiError(404, 'SOURCE_NOT_FOUND', 'Provider has no source for this title or episode.');
   const embed = allowedURL(new URL(data.src, pageURL).href, PROVIDER_HOSTS).href;
-  const player = await request(embed, { hosts: PROVIDER_HOSTS, headers: { ...CLIENT_HEADERS, Referer: pageURL, Accept: 'text/html' } });
+  const player = await upstream(embed, { hosts: PROVIDER_HOSTS, headers: { ...CLIENT_HEADERS, Referer: pageURL, Accept: 'text/html' } });
   checkProviderResponse(player, 'player_configuration', target);
   const parsed = parsePlayer((await readBody(player)).toString());
   if (parsed.expiresAt <= Date.now() + 60000) throw new ApiError(502, 'EXPIRED_SOURCE', 'Provider returned an expired stream; try again.');
   const headers = { ...CLIENT_HEADERS, Referer: embed, Origin: 'https://vixsrc.to' };
-  const master = await request(parsed.url, { hosts: PROVIDER_HOSTS, headers });
+  const master = await upstream(parsed.url, { hosts: PROVIDER_HOSTS, headers });
   checkProviderResponse(master, 'master_playlist', target);
   const manifest = (await readBody(master)).toString();
   return { ...parsed, url: master.finalURL, manifest, headers, pageURL, ...inspectManifest(manifest, master.finalURL) };

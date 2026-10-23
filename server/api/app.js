@@ -19,12 +19,16 @@ function keyMatches(provided, expected) {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-export function createApp(config, { provider = resolveProvider, upstream = request, tmdbClient = tmdb } = {}) {
+export function createApp(config, {
+  provider = resolveProvider, upstream = request, tmdbClient = tmdb,
+  store: injectedStore, proxyConfigured = hasUpstreamProxy,
+  getClientIP = req => req.socket.remoteAddress, transaction = operation => operation(),
+} = {}) {
   const hosts = [...MEDIA_HOSTS, ...(config.extraHosts || [])];
-  const store = new SessionStore(hosts), resolver = new Resolver(provider, store, config.baseURL);
+  const store = injectedStore || new SessionStore(hosts), resolver = new Resolver(provider, store, config.baseURL);
   const rates = new Map(); let activeMedia = 0;
   function rateLimit(req) {
-    const now = Date.now(), ip = req.socket.remoteAddress;
+    const now = Date.now(), ip = getClientIP(req);
     for (const [key, value] of rates) if (value.reset <= now) rates.delete(key);
     if (!rates.has(ip)) {
       if (rates.size >= 4096) throw new ApiError(429, 'RATE_LIMITED', 'Server is busy; retry later.');
@@ -49,7 +53,7 @@ export function createApp(config, { provider = resolveProvider, upstream = reque
       requireOK(response);
       if (resource.manifest || /mpegurl/i.test(response.headers['content-type'] || '')) {
         const text = (await readBody(response)).toString();
-        const body = rewriteManifest(text, response.finalURL, (url, manifest) => store.register(session, url, manifest, config.baseURL, { fromManifest: true }));
+        const body = transaction(() => rewriteManifest(text, response.finalURL, (url, manifest) => store.register(session, url, manifest, config.baseURL, { fromManifest: true })));
         return send(res, 200, body, 'application/vnd.apple.mpegurl');
       }
       const max = 32 * 1024 * 1024;
@@ -77,7 +81,7 @@ export function createApp(config, { provider = resolveProvider, upstream = reque
       }
       if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
       if (req.method !== 'GET') { res.setHeader('Allow', 'GET, OPTIONS'); throw new ApiError(405, 'METHOD_NOT_ALLOWED', 'Use GET.'); }
-      if (url.pathname === '/health') return send(res, 200, { ok: true, provider: 'vidpro', tmdbConfigured: Boolean(config.tmdbToken), proxyConfigured: hasUpstreamProxy() });
+      if (url.pathname === '/health') return send(res, 200, { ok: true, provider: 'vidpro', tmdbConfigured: Boolean(config.tmdbToken), proxyConfigured: proxyConfigured() });
       const subtitleMatch = url.pathname.match(/^\/v1\/subtitles\/([a-f0-9]{48})\/([a-f0-9]{24})\.vtt$/);
       if (subtitleMatch) {
         const session = store.get(subtitleMatch[1]), resource = session.resources.get(subtitleMatch[2]);

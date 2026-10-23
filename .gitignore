@@ -10,3 +10,6 @@ vids/
 .env.*
 !.env.example
 dist/
+.wrangler/
+.dev.vars
+.dev.vars.*

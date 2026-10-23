@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "flixgx-api",
+  "main": "server/cloudflare/worker.js",
+  "account_id": "4dfe2cc9c03befd652c1697114cde623",
+  "compatibility_date": "2026-10-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "PUBLIC_BASE_URL": "https://flixgx-api.muse-cloud.workers.dev",
+    "CORS_ORIGINS": "https://flixgx.com,https://www.flixgx.com,https://popcima.github.io"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "PLAYBACK_API", "class_name": "FlixGXAPI" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["FlixGXAPI"] }],
+  "observability": { "enabled": false }
+}
