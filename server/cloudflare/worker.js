@@ -1,5 +1,4 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { isIP } from 'node:net';
 import { httpServerHandler } from 'cloudflare:node';
@@ -8,7 +7,7 @@ import { ApiError } from '../api/errors.js';
 import { readBody } from '../api/network.js';
 import { MEDIA_HOSTS, resolveProvider } from '../api/provider.js';
 import { createTransport } from './network.js';
-import { SQLiteSessionStore } from './store.js';
+import { SnapshotSessionStore, storedAPIKey } from './snapshot-store.js';
 
 const activeRequest = new AsyncLocalStorage();
 const CLIENT_IP_HEADER = 'x-flixgx-client-ip';
@@ -67,16 +66,9 @@ export class FlixGXAPI {
     if (!['https:', 'http:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.pathname !== '/' || parsed.search || parsed.hash) {
       throw new Error('PUBLIC_BASE_URL must be an HTTP(S) origin without a path.');
     }
-    const apiKey = env.API_KEY || ctx.storage.transactionSync(() => {
-      ctx.storage.sql.exec('CREATE TABLE IF NOT EXISTS api_settings (name TEXT PRIMARY KEY, value TEXT NOT NULL)');
-      const saved = [...ctx.storage.sql.exec('SELECT value FROM api_settings WHERE name = ?', 'api_key')][0];
-      if (saved) return saved.value;
-      const value = randomBytes(32).toString('hex');
-      ctx.storage.sql.exec('INSERT INTO api_settings (name, value) VALUES (?, ?)', 'api_key', value);
-      return value;
-    });
+    const apiKey = env.API_KEY || storedAPIKey(ctx.storage.sql);
     const extraHosts = split(env.EXTRA_MEDIA_HOSTS);
-    this.store = new SQLiteSessionStore([...MEDIA_HOSTS, ...extraHosts], {
+    this.store = new SnapshotSessionStore([...MEDIA_HOSTS, ...extraHosts], {
       sql: ctx.storage.sql,
       onExpiry: timestamp => this.scheduleAlarm(timestamp),
     });
@@ -100,7 +92,7 @@ export class FlixGXAPI {
       },
       proxyConfigured: () => Boolean(env.UPSTREAM_PROXY_URL),
       getClientIP: req => req.headers[CLIENT_IP_HEADER] || 'unknown',
-      transaction: operation => ctx.storage.transactionSync(operation),
+      transaction: operation => this.store.transaction(operation),
     });
     const server = createServer((req, res) => {
       const url = new URL(req.url, baseURL);
@@ -122,7 +114,7 @@ export class FlixGXAPI {
   }
 
   async alarm() {
-    this.store.prune();
+    this.store.cleanup();
     const nextExpiry = this.store.nextExpiry();
     if (nextExpiry !== null) await this.ctx.storage.setAlarm(Math.max(Date.now() + 1000, nextExpiry));
   }

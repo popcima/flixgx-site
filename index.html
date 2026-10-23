@@ -1927,6 +1927,7 @@ function openModal(id, mediaType) {
     }
     // store for play button
     window.__fp = { id: d.id, mediaType: type, title, subtitle: year + (runtime ? '  ·  ' + runtime : ''), backdropUrl, posterUrl: poster, runtimeSecs, seasons: d.seasons || [] };
+    window.preparePlayer?.(window.__fp);
 
     inner.innerHTML = `
       <div class="modal-poster">

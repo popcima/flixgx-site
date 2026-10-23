@@ -9,6 +9,7 @@ import { request, requireOK, readBody, hasUpstreamProxy } from './network.js';
 import { rewriteManifest, m3uPlaylist } from './hls.js';
 import { tmdb } from './tmdb.js';
 import { fetchSubtitle } from './subtitles.js';
+import { ManifestCache } from './manifest-cache.js';
 
 function send(res, status, body, type = 'application/json; charset=utf-8') {
   res.writeHead(status, { 'Content-Type': type });
@@ -25,7 +26,14 @@ export function createApp(config, {
   getClientIP = req => req.socket.remoteAddress, transaction = operation => operation(),
 } = {}) {
   const hosts = [...MEDIA_HOSTS, ...(config.extraHosts || [])];
-  const store = injectedStore || new SessionStore(hosts), resolver = new Resolver(provider, store, config.baseURL);
+  const store = injectedStore || new SessionStore(hosts), manifests = new ManifestCache();
+  const rewrite = (session, text, finalURL) => transaction(() => rewriteManifest(text, finalURL,
+    (url, manifest) => store.register(session, url, manifest, config.baseURL, { fromManifest: true })));
+  const resolver = new Resolver(provider, store, config.baseURL, { transaction, onResolved(session, source, playbackUrl) {
+    if (!source.manifest) return;
+    const id = new URL(playbackUrl).pathname.split('/').at(-1).replace(/\.m3u8$/, '');
+    manifests.put(`${session.id}/${id}`, rewrite(session, source.manifest, source.url), session.expiresAt);
+  } });
   const rates = new Map(); let activeMedia = 0;
   function rateLimit(req) {
     const now = Date.now(), ip = getClientIP(req);
@@ -39,6 +47,11 @@ export function createApp(config, {
   async function media(req, res, sessionId, resourceId) {
     const session = store.get(sessionId), resource = session.resources.get(resourceId);
     if (!resource) throw new ApiError(404, 'RESOURCE_NOT_FOUND', 'Unknown playback resource.');
+    const cacheKey = `${sessionId}/${resourceId}`, cached = resource.manifest && manifests.get(cacheKey);
+    if (cached) {
+      res.setHeader('Server-Timing', 'playlist_cache;desc="hit"');
+      return send(res, 200, cached, 'application/vnd.apple.mpegurl');
+    }
     if (activeMedia >= 24) throw new ApiError(503, 'MEDIA_BUSY', 'Too many simultaneous media requests.');
     activeMedia++;
     let response;
@@ -53,7 +66,8 @@ export function createApp(config, {
       requireOK(response);
       if (resource.manifest || /mpegurl/i.test(response.headers['content-type'] || '')) {
         const text = (await readBody(response)).toString();
-        const body = transaction(() => rewriteManifest(text, response.finalURL, (url, manifest) => store.register(session, url, manifest, config.baseURL, { fromManifest: true })));
+        const body = rewrite(session, text, response.finalURL);
+        manifests.put(cacheKey, body, session.expiresAt);
         return send(res, 200, body, 'application/vnd.apple.mpegurl');
       }
       const max = 32 * 1024 * 1024;
@@ -88,7 +102,7 @@ export function createApp(config, {
         if (activeMedia >= 24) throw new ApiError(503, 'MEDIA_BUSY', 'Too many simultaneous media requests.');
         activeMedia++;
         try {
-          const body = await fetchSubtitle(resource, session, session.hosts, upstream, url => store.trustManifestURL(session, url));
+          const body = await fetchSubtitle(resource, session, session.hosts, upstream, url => transaction(() => store.trustManifestURL(session, url)));
           if (url.searchParams.get('download') === '1') res.setHeader('Content-Disposition', 'attachment; filename="subtitles.vtt"');
           return send(res, 200, body, 'text/vtt; charset=utf-8');
         } finally { activeMedia--; }

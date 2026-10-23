@@ -3,6 +3,7 @@ import { chooseSubtitle, readPreference, savePreference } from './subtitle-prefe
 const $ = id => document.getElementById(`stream-${id}`);
 const overlay = document.getElementById('fp-overlay'), video = document.getElementById('fp-video');
 let hls, generation = 0, episodeRequest = 0, controller, currentTitle, returnFocus, previousOverflow;
+let prepared = null, playRequestedAt = 0, sessionRecoveryAvailable = true;
 let sourceSubtitles = [], subtitleTracks = [], nativeActive = false, preference = null, background = [];
 try { preference = readPreference(localStorage); } catch { /* Private browsing may disable storage. */ }
 const options = (element, values) => element.replaceChildren(...values.map(([value, label]) => {
@@ -245,6 +246,7 @@ document.addEventListener('keydown', event => {
 detectPip(); updateVolume(); updateMediaControls();
 
 function resetMedia() {
+  clearPreparation();
   currentTitle = null; closeMenus(); clearTimeout(hideTimer); setBuffering(false); playbackError = false;
   $('message').hidden = true; $('episodes-toggle').hidden = true; overlay.classList.remove('controls-hidden', 'is-seeking');
   controller?.abort(); controller = null; nativeActive = false;
@@ -308,32 +310,55 @@ async function setupEpisodes(title, current) {
   } catch { if (generation === current) $('episode').disabled = true; }
 }
 function playVideo(current, resumeAt = 0) {
-  if (current !== generation) return;
+  if (current !== generation || !isOpen()) return;
   if (resumeAt > 0) video.currentTime = resumeAt;
   video.play().catch(error => {
     if (current === generation && error.name !== 'AbortError') status('Ready. Press Play in the video to start.');
   });
 }
 
-window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0 } = {}) {
-  const current = ++generation; episodeRequest++; resetMedia();
-  const title = { ...metadata, season: Number(metadata?.season ?? metadata?.seasons?.find(s => s.season_number > 0)?.season_number ?? 1), episode: Number(metadata?.episode ?? 1) };
-  currentTitle = title;
-  if (!overlay.classList.contains('open')) {
-    returnFocus = document.activeElement;
-    document.getElementById('modal-backdrop')?.classList.remove('open');
-    // Modal also locks scrolling; restore normal catalog scrolling on close.
-    previousOverflow = document.body.style.overflow === 'hidden' ? '' : document.body.style.overflow;
-    background = Array.from(document.body.children).filter(el => el !== overlay).map(el => [el, el.inert]);
-    background.forEach(([el]) => { el.inert = true; });
-  }
-  overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
-  keyboardFocus = false; hoveringChrome = false; showChrome();
-  $('close').focus(); $('title').textContent = title.title || 'Now playing';
-  $('detail').textContent = title.mediaType === 'tv' ? `Season ${title.season} · Episode ${title.episode}${title.episodeName ? ` · ${title.episodeName}` : ''}` : title.subtitle || 'Movie';
-  video.removeAttribute('poster');
-  status('Finding a stream…');
-  void setupEpisodes(title, current);
+const normalizedTitle = metadata => ({ ...metadata,
+  season: Number(metadata?.season ?? metadata?.seasons?.find(s => s.season_number > 0)?.season_number ?? 1),
+  episode: Number(metadata?.episode ?? 1) });
+const titleKey = title => `${title.mediaType}/${title.id}/${title.season}/${title.episode}`;
+function clearPreparation() {
+  if (prepared) { clearTimeout(prepared.expiryTimer); clearTimeout(prepared.loadTimer); }
+  prepared = null; overlay.dataset.preloadState = 'idle';
+}
+window.cancelPreparedPlayer = function () {
+  if (!prepared || isOpen()) return;
+  generation++; resetMedia();
+};
+window.preparePlayer = function (metadata) {
+  // Prepare only the selected title, never an entire catalog or autoplaying hero.
+  if (isOpen() || !document.getElementById('modal-backdrop')?.classList.contains('open') ||
+      !window.Hls?.isSupported() || navigator.connection?.saveData || /(^|-)2g$/.test(navigator.connection?.effectiveType || '')) return;
+  const title = normalizedTitle(metadata), key = titleKey(title);
+  if (!/^[1-9]\d{0,9}$/.test(String(title.id)) || !['movie', 'tv'].includes(title.mediaType)) return;
+  if (prepared?.key === key && prepared.until > Date.now()) return;
+  const current = ++generation; resetMedia();
+  const entry = prepared = { key, current, until: Date.now() + 60000, ready: false };
+  overlay.dataset.preloadState = 'loading';
+  entry.expiryTimer = setTimeout(window.cancelPreparedPlayer, 60000);
+  entry.loadTimer = setTimeout(window.cancelPreparedPlayer, 12000);
+  entry.promise = loadMedia(title, current);
+};
+function stopPreparationAtBuffer() {
+  if (!prepared || isOpen() || !video.buffered.length || video.readyState < 3) return;
+  const seconds = video.buffered.end(0) - video.buffered.start(0);
+  if (seconds < Math.min(4, video.duration || 4)) return;
+  prepared.ready = true; clearTimeout(prepared.loadTimer);
+  hls?.stopLoad(); overlay.dataset.preloadState = 'ready';
+}
+video.addEventListener('progress', stopPreparationAtBuffer);
+video.addEventListener('canplay', stopPreparationAtBuffer);
+// Also cancel a preparation when the catalog closes its modal by Escape or another control.
+const catalogModal = document.getElementById('modal-backdrop');
+if (catalogModal) new MutationObserver(() => {
+  if (!catalogModal.classList.contains('open') && !isOpen()) window.cancelPreparedPlayer();
+}).observe(catalogModal, { attributes: true, attributeFilter: ['class'] });
+
+async function loadMedia(title, current, { refresh = false, resumeAt = 0 } = {}) {
   try {
     if (!/^[1-9]\d{0,9}$/.test(String(title.id)) || !['movie', 'tv'].includes(title.mediaType)) throw new Error('Could not load this title. Close the player and select it again.');
     const base = (window.FLIXGX_PLAYER?.apiBaseUrl || '').replace(/\/$/, '');
@@ -347,11 +372,15 @@ window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0 } 
     const data = await response.json();
     if (!response.ok) throw new Error(data.error?.message || 'This stream is unavailable. Try again shortly.');
     if (current !== generation) return;
+    if (prepared?.current === current) prepared.until = Math.min(prepared.until, Date.parse(data.expiresAt) - 5000);
     const source = data.sources?.[0];
     if (!source?.playbackUrl) throw new Error('No playable stream was found for this title.');
     sourceSubtitles = source.subtitles || [];
     if (window.Hls?.isSupported()) {
-      const instance = hls = new Hls({ maxBufferLength: 15, maxMaxBufferLength: 30, renderTextTracksNatively: true });
+      const preparing = prepared?.current === current;
+      const instance = hls = new Hls({ startLevel: 0, testBandwidth: false,
+        maxBufferLength: preparing ? 4 : 15, maxMaxBufferLength: preparing ? 8 : 30,
+        renderTextTracksNatively: true });
       instance.on(Hls.Events.MANIFEST_PARSED, () => {
         options($('quality'), [[-1, 'Auto'], ...instance.levels.map((level, i) => [i, `${level.height}p`])]);
         $('quality').disabled = instance.levels.length < 2;
@@ -374,6 +403,10 @@ window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0 } 
       instance.on(Hls.Events.ERROR, (_, data) => {
         if (current !== generation) return;
         if (/subtitle/i.test(data.details || '')) $('subtitle-status').textContent = 'This subtitle track could not load. Try another language.';
+        if (data.fatal && !isOpen()) { window.cancelPreparedPlayer(); return; }
+        if (data.fatal && data.response?.code === 410 && sessionRecoveryAvailable && currentTitle) {
+          void window.openPlayer(currentTitle, { refresh: true, resumeAt: video.currentTime, recovering: true }); return;
+        }
         if (data.fatal) { instance.destroy(); if (hls === instance) hls = null; status('Playback was interrupted. Retry to request a fresh stream.', true); }
       });
       instance.loadSource(source.playbackUrl); instance.attachMedia(video);
@@ -384,10 +417,48 @@ window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0 } 
     status('Loading video…');
   } catch (error) {
     if (current !== generation || error.name === 'AbortError') return;
+    if (!isOpen()) { window.cancelPreparedPlayer(); return; }
     status(error instanceof TypeError ? 'The video service cannot be reached. Check your connection and retry.' : error.message, true);
     $('subtitle-status').textContent = '';
   }
+}
+
+window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0, recovering = false } = {}) {
+  sessionRecoveryAvailable = !recovering;
+  playRequestedAt = performance.now(); delete overlay.dataset.startupMs;
+  const title = normalizedTitle(metadata);
+  const reuse = !refresh && !resumeAt && prepared?.key === titleKey(title) && prepared.until > Date.now() && !playbackError ? prepared : null;
+  const current = reuse ? generation : ++generation;
+  episodeRequest++;
+  if (reuse) clearPreparation(); else resetMedia();
+  overlay.dataset.prepared = String(Boolean(reuse));
+  currentTitle = title;
+  if (!overlay.classList.contains('open')) {
+    returnFocus = document.activeElement;
+    document.getElementById('modal-backdrop')?.classList.remove('open');
+    // Modal also locks scrolling; restore normal catalog scrolling on close.
+    previousOverflow = document.body.style.overflow === 'hidden' ? '' : document.body.style.overflow;
+    background = Array.from(document.body.children).filter(el => el !== overlay).map(el => [el, el.inert]);
+    background.forEach(([el]) => { el.inert = true; });
+  }
+  overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+  keyboardFocus = false; hoveringChrome = false; showChrome();
+  $('close').focus(); $('title').textContent = title.title || 'Now playing';
+  $('detail').textContent = title.mediaType === 'tv' ? `Season ${title.season} · Episode ${title.episode}${title.episodeName ? ` · ${title.episodeName}` : ''}` : title.subtitle || 'Movie';
+  video.removeAttribute('poster');
+  status('Finding a stream…');
+  void setupEpisodes(title, current);
+  if (reuse) {
+    await reuse.promise;
+    if (current !== generation) return;
+    if (hls) {
+      hls.config.maxBufferLength = 15; hls.config.maxMaxBufferLength = 30;
+      if (reuse.ready) hls.startLoad(-1);
+    }
+    if (!playbackError && video.getAttribute('src')) playVideo(current, resumeAt);
+  } else await loadMedia(title, current, { refresh, resumeAt });
 };
+
 window.closePlayer = function () {
   generation++; episodeRequest++; resetMedia(); currentTitle = null;
   if (document.fullscreenElement === overlay) document.exitFullscreen().catch(() => {});
@@ -400,7 +471,15 @@ window.closePlayer = function () {
 };
 $('close').addEventListener('click', window.closePlayer);
 $('retry').addEventListener('click', () => window.openPlayer(currentTitle, { refresh: true, resumeAt: video.currentTime }));
-video.addEventListener('playing', () => { if (currentTitle) { status('Playing'); scheduleHide(); } });
+video.addEventListener('playing', () => {
+  if (!currentTitle) return;
+  status('Playing'); scheduleHide();
+  if (!overlay.dataset.startupMs && playRequestedAt) {
+    const current = generation, started = playRequestedAt;
+    const record = () => { if (current === generation && isOpen() && !overlay.dataset.startupMs) overlay.dataset.startupMs = String(Math.round(performance.now() - started)); };
+    if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(record); else record();
+  }
+});
 video.addEventListener('pause', () => { if (currentTitle && video.getAttribute('src') && !video.ended && !playbackError) { status('Paused'); showChrome(); } });
 video.addEventListener('waiting', () => { if (currentTitle && !playbackError) status('Buffering…'); });
 video.addEventListener('ended', () => { if (currentTitle) { status(currentTitle.mediaType === 'tv' ? 'Episode finished. Choose another episode to continue.' : 'Movie finished.'); showChrome(); } });

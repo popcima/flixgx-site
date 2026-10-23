@@ -59,7 +59,7 @@ export class SessionStore {
 }
 
 export class Resolver {
-  constructor(provider, store, baseURL) { this.provider = provider; this.store = store; this.baseURL = baseURL; this.cache = new Map(); this.pending = new Map(); }
+  constructor(provider, store, baseURL, { onResolved = () => {}, transaction = operation => operation() } = {}) { this.provider = provider; this.store = store; this.baseURL = baseURL; this.onResolved = onResolved; this.transaction = transaction; this.cache = new Map(); this.pending = new Map(); }
   async resolve(target, { refresh = false } = {}) {
     const key = JSON.stringify(target);
     if (refresh) this.cache.delete(key);
@@ -79,7 +79,11 @@ export class Resolver {
     this.pending.set(key, job); return job;
   }
   async perform(target) {
-    const source = await this.provider(target), session = this.store.create(source);
+    const source = await this.provider(target);
+    return this.transaction(() => this.registerSource(target, source));
+  }
+  registerSource(target, source) {
+    const session = this.store.create(source);
     const playbackUrl = this.store.register(session, source.url, true, this.baseURL);
     const subtitles = (source.subtitles || []).map(track => {
       if (!track.url) return track;
@@ -87,6 +91,7 @@ export class Resolver {
       return { ...track, format: 'hls', playlistUrl,
         vttUrl: playlistUrl.replace('/v1/media/', '/v1/subtitles/').replace(/\.m3u8$/, '.vtt') };
     });
+    this.onResolved(session, source, playbackUrl);
     return { ...target, provider: 'vidpro', providerPage: source.pageURL, resolvedAt: new Date().toISOString(),
       expiresAt: new Date(session.expiresAt).toISOString(),
       sources: [{ type: 'hls', mimeType: 'application/vnd.apple.mpegurl', url: source.url, playbackUrl,

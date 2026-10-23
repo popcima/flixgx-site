@@ -22,7 +22,7 @@ Open http://localhost:8788. The site and its playback server run together. `npm 
 
 ## Host the API on Cloudflare Free
 
-The permanent Cloudflare implementation runs with your Mac off. `wrangler.jsonc` deploys the `flixgx-api` Worker and binds `PLAYBACK_API` to the `FlixGXAPI` SQLite Durable Object. All requests use one Object named `playback-v1`; it handles provider connections, video relaying and persistent playback sessions. The frontend can remain on GitHub Pages.
+The permanent Cloudflare implementation runs with your Mac off. `wrangler.jsonc` deploys the `flixgx-api` Worker and binds `PLAYBACK_API` to the `FlixGXAPI` SQLite Durable Object. All requests use one Object named `playback-v1`; it handles provider connections, video relaying and playback sessions. The frontend can remain on GitHub Pages.
 
 The checked-in configuration targets `https://flixgx-api.muse-cloud.workers.dev`. This address is a deployment target, not a claim that a particular deployment has passed playback verification. For another Cloudflare account, update `account_id` and `PUBLIC_BASE_URL` to match that account's assigned Workers address.
 
@@ -157,10 +157,16 @@ Without `API_KEY`, the server uses an internal random key; website playback stil
 
 ## Runtime limits
 
+Opening a title's details prepares one short video buffer without autoplay. Preparation stops after roughly four seconds of buffered media (whole segments can exceed this), has a 12-second loading deadline and a 60-second retention limit, and is canceled when the details close. It is skipped on reported data-saving/2G connections and browsers using native HLS. Play reuses that buffer when available. HLS starts at the lowest rendition and keeps automatic quality adjustment enabled; the quality menu can still override it.
+
+The API reuses the master playlist already fetched during source lookup. Rewritten master and completed VOD playlists have a bounded in-memory cache (120 seconds, 64 entries, 8 MiB, never beyond session expiry). Growing media playlists and video bytes are not cached there. These changes reduce startup requests, but a fresh title still depends on the provider, proxy, and viewer's connection; a one-second start is not guaranteed.
+
+Cloudflare saves resource references as one session snapshot per playlist rewrite, avoiding thousands of database writes for individual segments. Snapshot metadata is bounded to 128 cached sessions, 8 MiB total serialized data and 4 MiB per session; least recently used entries can be evicted. When the free database read/write allowance is exhausted, active sessions continue in memory. Unsaved sessions may be lost on a restart or eviction, and the player retries an expired HLS session once automatically. Persistence resumes on the next write after the daily quota reset at 00:00 UTC. This does not remove Worker request, duration or proxy limits. Existing URLs from the older database format are still readable.
+
 - TMDB supplies catalog metadata and IDs; the separate Vidpro provider supplies the streams. Catalog presence does not guarantee a playable stream.
 - This implementation integrates the observed Vidpro provider flow. Upstream availability and formats can change. CDN URLs are discovered only from verified provider playlists and allowed for that playback session. HTTPS, host limits and DNS checks still block private-network access. A redirect to a host absent from those playlists needs verification before adding it to `EXTRA_MEDIA_HOSTS`.
 - Subtitle languages, audio and qualities vary by title. HLS subtitles play through the media manifest; VTT download supports the observed single-file subtitle playlists and reports unsupported formats rather than returning broken subtitles.
-- Sessions expire after at most six hours, or earlier when the provider source expires. The Node server keeps them in memory, so a restart invalidates its URLs; Retry resolves them again. The Cloudflare implementation persists sessions and resource references in SQLite and removes them on expiry. Node deployments with multiple instances need sticky routing or shared state.
+- Sessions expire after at most six hours, or earlier when the provider source expires. The Node server keeps them in memory, so a restart invalidates its URLs; Retry resolves them again. Cloudflare persists bounded session snapshots when storage is available, with the memory fallback described above. Node deployments with multiple instances need sticky routing or shared state.
 - The server allows four concurrent resolutions, 24 media requests and 128 playback sessions. It relays video bytes, so hosting bandwidth matters. API rate limiting is 60 requests/minute per IP for resolution/metadata routes. Node uses the connection IP, so visitors behind a reverse proxy may share that limit; the Worker forwards Cloudflare's client IP and replaces any client-supplied internal IP header. Configure suitable edge limits for a larger deployment.
 - Chromium playback is verified locally. Native Safari/iOS support is implemented but needs testing on the target devices.
 
