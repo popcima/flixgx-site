@@ -1,0 +1,61 @@
+/* Download landing page. Availability is status text until real links exist. */
+.app-page .home-header-icon[aria-current="page"] { color: #fff; background: rgba(255,255,255,.07); }
+.app-main { padding-top: 136px; padding-bottom: 76px; }
+.app-layout { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: 80px; max-width: 1160px; margin: 0 auto; }
+.app-intro { min-width: 0; padding-bottom: 10px; }
+.app-eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; color: var(--home-muted); font-size: 10px; font-weight: 600; letter-spacing: .2em; line-height: 1.5; }
+.app-eyebrow::before { content: ''; width: 22px; height: 2px; background: var(--home-red); }
+.app-intro h1 { margin: 0 0 24px; color: #eef1f6; font-size: clamp(48px, 5.3vw, 72px); font-weight: 600; line-height: 1.05; letter-spacing: -.055em; }
+.app-intro h1 span { color: var(--home-red); }
+.app-description { max-width: 430px; margin: 0 0 28px; color: var(--home-muted); font-size: 16px; line-height: 1.8; }
+.app-browser-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 11px 23px; border: 1px solid #eef1f6; border-radius: 999px; color: #05070a; background: #eef1f6; text-decoration: none; font-size: 14px; font-weight: 600; line-height: 1.5; transition: background .18s, transform .18s; }
+.app-browser-link svg { width: 17px; height: 17px; }
+.app-browser-link:hover { background: #fff; transform: translateY(-1px); }
+.app-platforms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 40px; max-width: 490px; }
+.app-platform { padding: 23px 22px; border: 1px solid rgba(238,241,246,.12); border-radius: 12px; background: rgba(238,241,246,.025); }
+.app-platform-heading { display: flex; align-items: center; gap: 12px; }
+.app-platform-heading svg { flex: 0 0 26px; width: 26px; height: 26px; color: #d6dbe4; }
+.app-platform h2 { margin: 0; font-size: 16px; font-weight: 500; letter-spacing: -.015em; line-height: 1.5; }
+.app-availability { display: flex; align-items: center; gap: 7px; margin: 24px 0 0; color: #a5adbb; font-size: 11px; line-height: 1.5; }
+.app-availability span { width: 5px; height: 5px; flex: 0 0 5px; border-radius: 50%; background: var(--home-red); }
+.app-download-note { max-width: 490px; margin: 15px 0 0; color: var(--home-muted); font-size: 12px; line-height: 1.7; }
+.app-preview { position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; margin: 0; padding: 4px 0 0; }
+.app-preview-glow { position: absolute; z-index: -1; top: 8%; bottom: 8%; left: 0; right: 0; pointer-events: none; background: radial-gradient(ellipse, rgba(130,32,24,.16), rgba(130,32,24,0) 67%) center / 136% 100% no-repeat; }
+.app-phone { position: relative; width: min(290px, 100%); padding: 7px; border: 1px solid #505158; border-radius: 35px; background: #111319; box-shadow: 0 0 0 2px #191c22, 0 35px 70px rgba(0,0,0,.5); }
+.app-phone::after { content: ''; position: absolute; top: 130px; right: -4px; width: 3px; height: 55px; border-radius: 0 2px 2px 0; background: #3b3e46; }
+.app-phone-screen { overflow: hidden; border-radius: 27px; background: #05070a; }
+.app-phone img { display: block; width: 100%; height: auto; }
+.app-preview figcaption { display: flex; align-items: center; gap: 7px; margin-top: 24px; color: #8a94a6; font-size: 10px; letter-spacing: .02em; line-height: 1.5; }
+.app-preview figcaption span { width: 4px; height: 4px; border-radius: 50%; background: #7b8492; }
+.app-main :focus-visible { outline: 2px solid #fff; outline-offset: 5px; }
+.app-page .home-footer { margin-top: 0; }
+@media (max-width: 1100px) {
+  .app-layout { gap: 48px; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+  .app-intro h1 { font-size: 54px; }
+  .app-main { padding-top: 124px; padding-bottom: 64px; }
+  .app-phone { width: min(264px, 100%); }
+  .app-platform { padding: 21px 16px; }
+  .app-platform-heading { gap: 9px; }
+}
+@media (max-width: 760px) {
+  .app-main { padding-top: 116px; padding-bottom: 64px; }
+  .app-layout { grid-template-columns: minmax(0, 1fr); gap: 56px; max-width: 530px; }
+  .app-intro { padding-bottom: 0; }
+  .app-intro h1 { font-size: clamp(45px, 9vw, 58px); }
+  .app-eyebrow { margin-bottom: 19px; }
+  .app-description { font-size: 15px; line-height: 1.75; }
+  .app-platforms { margin-top: 34px; gap: 12px; }
+  .app-platform { padding: 21px 18px; }
+  .app-preview { padding: 0; }
+  .app-preview-glow { background-size: 100% 100%; }
+  .app-phone { width: 264px; max-width: calc(100% - 24px); }
+}
+@media (max-width: 359px) {
+  .app-platform { padding: 19px 12px; }
+  .app-platform-heading { gap: 7px; }
+  .app-platform-heading svg { flex-basis: 23px; width: 23px; height: 23px; }
+  .app-platform h2 { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-browser-link { transition: none; }
+}
