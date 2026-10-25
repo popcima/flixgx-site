@@ -20,7 +20,7 @@ test('site serves the real player, hides private files, and routes movie/TV play
     assert.match(html, /assets\/details.js/); assert.match(html, /assets\/details.css/);
     assert.doesNotMatch(html, /content-locker|ADBLUE|__fpPause|FAKE PLAYER/);
   }
-  for (const [asset, contentType] of [['details.js', 'text/javascript'], ['details.css', 'text/css']]) {
+  for (const [asset, contentType] of [['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css']]) {
     const response = await fetch(`${base}/assets/${asset}`);
     assert.equal(response.status, 200);
     assert.ok(response.headers.get('content-type').startsWith(contentType));
