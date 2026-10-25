@@ -126,8 +126,7 @@ body { margin: 0; background: var(--home-bg); color: var(--home-text); font-fami
 .home-footer { margin-top: 12px; padding: 48px 0 40px; border-top: 1px solid rgba(255,255,255,.06); }
 .home-footer-brand { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
 .home-footer-description { max-width: 520px; margin: 0 0 6px; color: var(--home-muted); font-size: 13px; line-height: 1.65; }
-.home-footer-description a, .home-footer-credit a { text-decoration: underline; text-underline-offset: 3px; }
-.home-footer-credit { margin: 0; color: var(--home-muted); font-size: 12px; line-height: 1.65; }
+.home-footer-description a { text-decoration: underline; text-underline-offset: 3px; }
 
 .home-list { width: min(640px, calc(100% - 32px)); max-height: calc(100dvh - 48px); padding: 0; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; background: #0d1016; color: var(--home-text); font-family: Inter, system-ui, sans-serif; box-shadow: 0 30px 100px rgba(0,0,0,.6); }
 .home-list::backdrop { background: rgba(0,0,0,.75); backdrop-filter: blur(6px); }
