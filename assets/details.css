@@ -148,3 +148,10 @@
   #modal-backdrop.details-page, .detail-trailer, .detail-rec-art img { transition: none; }
   .detail-spinner { animation-duration: 2s; }
 }
+
+.details-page .detail-share-feedback { margin-top: 14px; font-size: 14px; color: #eef1f6; }
+.details-page .detail-share-feedback[hidden], .details-page .detail-share-link[hidden] { display: none; }
+.details-page .detail-share-feedback p { margin: 0 0 8px; }
+.details-page .detail-share-link { width: 100%; max-width: 440px; box-sizing: border-box; border: 1px solid #737780; border-radius: 8px; padding: 10px 12px; background: #16181d; color: #fff; font: inherit; }
+.details-page .detail-share-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.details-page [data-action="share"]:disabled { opacity: .65; cursor: wait; }

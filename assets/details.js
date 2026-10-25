@@ -9,7 +9,7 @@
   const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${{
     back: '<path d="m14 5-7 7 7 7"/>', play: '<path d="m7 4 13 8-13 8Z" fill="currentColor" stroke="none"/>',
     plus: '<path d="M12 5v14M5 12h14"/>', check: '<path d="m5 12 4 4L19 6"/>',
-    episodes: '<path d="M5 6h14M5 12h14M5 18h9"/>', similar: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+    episodes: '<path d="M5 6h14M5 12h14M5 18h9"/>', share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4m-6.8 7 6.8 4"/>',
     mute: '<path d="m11 5-6 4H2v6h3l6 4Z"/><path d="m17 9 5 6m0-6-5 6"/>', sound: '<path d="m11 5-6 4H2v6h3l6 4Z"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>'
   }[name] || ''}</svg>`;
   const back = () => `<button type="button" class="detail-circle detail-back" data-action="back" aria-label="Back to browsing" title="Back">${icon('back')}</button>`;
@@ -136,7 +136,7 @@
     state.trailer = trailer?.key || null; state.muted = true;
     window.__fp = state.metadata;
     const meta = [year, runtime, ...(data.genres || []).slice(0, 3).map(g => g.name)].filter(Boolean);
-    overlay.innerHTML = `<section class="detail-hero" aria-labelledby="detail-title">${back()}<button class="detail-circle detail-mute" type="button" data-action="mute" aria-label="Unmute trailer preview" title="Unmute trailer preview" hidden>${icon('mute')}</button>${backdrop ? `<img class="detail-art" src="${backdrop}" alt="" fetchpriority="high" data-image-fallback>` : ''}<div class="detail-trailer" aria-hidden="true"></div><div class="detail-shade"></div><div class="detail-info"><h1 class="detail-heading" id="detail-title">${logo ? `<img class="detail-logo" src="${image(logo.file_path, 'w500')}" alt="${esc(title)}" data-logo-fallback="${esc(title)}">` : esc(title)}</h1><div class="detail-meta"><span class="detail-rating"><span class="detail-star">★</span>${data.vote_average ? Number(data.vote_average).toFixed(1) : '—'}</span>${meta.map(value => `<span class="detail-dot">·</span><span>${esc(value)}</span>`).join('')}</div><div class="detail-description"><p id="detail-overview">${esc(data.overview || 'No description available.')}</p><button type="button" class="detail-read-more" data-action="description" aria-expanded="false" aria-controls="detail-overview" hidden>Read more</button></div><div class="detail-actions"><button type="button" class="detail-play" data-action="play">${icon('play')}<span>Play</span></button><button type="button" class="detail-circle detail-watchlist" data-action="watchlist" aria-label="Add to My List" aria-pressed="false">${icon('plus')}</button>${type === 'tv' ? `<button type="button" class="detail-pill" data-scroll-to="detail-episodes">${icon('episodes')}Episodes</button>` : ''}<button type="button" class="detail-pill" data-scroll-to="detail-similar">${icon('similar')}Similars</button></div><span class="detail-sr-only" role="status" id="detail-notice"></span></div></section><div class="detail-below">${type === 'tv' ? `<section class="detail-section" id="detail-episodes" tabindex="-1" aria-labelledby="detail-episodes-title"><div class="detail-episode-heading"><h2 class="detail-section-heading" id="detail-episodes-title">Episodes</h2>${seasons.length ? `<label class="detail-season-control">Season<select id="detail-season" aria-label="Select season">${seasons.map(s => `<option value="${s.season_number}">${esc(s.name || `Season ${s.season_number}`)}</option>`).join('')}</select></label>` : ''}</div><div id="detail-episode-list" aria-live="polite"><p class="detail-empty">${seasons.length ? 'Loading episodes…' : 'No episodes are available yet.'}</p></div></section>` : ''}<section class="detail-section" aria-labelledby="detail-cast-title"><h2 class="detail-section-heading" id="detail-cast-title">Actors</h2>${renderCredits(data.credits?.cast)}</section><section class="detail-section" id="detail-similar" tabindex="-1" aria-labelledby="detail-similar-title"><h2 class="detail-section-heading" id="detail-similar-title">You may like</h2><div id="detail-recommendations">${renderRecommendations(data.recommendations?.results?.length ? data.recommendations.results : data.similar?.results || [], type)}</div></section></div>`;
+    overlay.innerHTML = `<section class="detail-hero" aria-labelledby="detail-title">${back()}<button class="detail-circle detail-mute" type="button" data-action="mute" aria-label="Unmute trailer preview" title="Unmute trailer preview" hidden>${icon('mute')}</button>${backdrop ? `<img class="detail-art" src="${backdrop}" alt="" fetchpriority="high" data-image-fallback>` : ''}<div class="detail-trailer" aria-hidden="true"></div><div class="detail-shade"></div><div class="detail-info"><h1 class="detail-heading" id="detail-title">${logo ? `<img class="detail-logo" src="${image(logo.file_path, 'w500')}" alt="${esc(title)}" data-logo-fallback="${esc(title)}">` : esc(title)}</h1><div class="detail-meta"><span class="detail-rating"><span class="detail-star">★</span>${data.vote_average ? Number(data.vote_average).toFixed(1) : '—'}</span>${meta.map(value => `<span class="detail-dot">·</span><span>${esc(value)}</span>`).join('')}</div><div class="detail-description"><p id="detail-overview">${esc(data.overview || 'No description available.')}</p><button type="button" class="detail-read-more" data-action="description" aria-expanded="false" aria-controls="detail-overview" hidden>Read more</button></div><div class="detail-actions"><button type="button" class="detail-play" data-action="play">${icon('play')}<span>Play</span></button><button type="button" class="detail-circle detail-watchlist" data-action="watchlist" aria-label="Add to My List" aria-pressed="false">${icon('plus')}</button>${type === 'tv' ? `<button type="button" class="detail-pill" data-scroll-to="detail-episodes">${icon('episodes')}Episodes</button>` : ''}<button type="button" class="detail-pill" data-action="share">${icon('share')}Share</button></div><div class="detail-share-feedback" hidden><p role="status" id="detail-share-status"></p><input class="detail-share-link" aria-label="Link to this title" readonly hidden></div><span class="detail-sr-only" role="status" id="detail-notice"></span></div></section><div class="detail-below">${type === 'tv' ? `<section class="detail-section" id="detail-episodes" tabindex="-1" aria-labelledby="detail-episodes-title"><div class="detail-episode-heading"><h2 class="detail-section-heading" id="detail-episodes-title">Episodes</h2>${seasons.length ? `<label class="detail-season-control">Season<select id="detail-season" aria-label="Select season">${seasons.map(s => `<option value="${s.season_number}">${esc(s.name || `Season ${s.season_number}`)}</option>`).join('')}</select></label>` : ''}</div><div id="detail-episode-list" aria-live="polite"><p class="detail-empty">${seasons.length ? 'Loading episodes…' : 'No episodes are available yet.'}</p></div></section>` : ''}<section class="detail-section" aria-labelledby="detail-cast-title"><h2 class="detail-section-heading" id="detail-cast-title">Actors</h2>${renderCredits(data.credits?.cast)}</section><section class="detail-section" id="detail-similar" tabindex="-1" aria-labelledby="detail-similar-title"><h2 class="detail-section-heading" id="detail-similar-title">You may like</h2><div id="detail-recommendations">${renderRecommendations(data.recommendations?.results?.length ? data.recommendations.results : data.similar?.results || [], type)}</div></section></div>`;
     overlay.setAttribute('aria-labelledby', 'detail-title'); overlay.removeAttribute('aria-label');
     updateWatchlist(); updatePlay(); focusBack();
     requestAnimationFrame(() => {
@@ -196,6 +196,41 @@
     } catch {
       if (!valid(token) || request !== seasonVersion) return;
       list.innerHTML = '<p class="detail-empty">Couldn’t load episodes. <button type="button" class="detail-pill" data-action="retry-season">Try again</button></p>';
+    }
+  }
+  async function shareTitle(button) {
+    if (!state?.metadata || button.disabled) return;
+    const token = version, { id, mediaType, title } = state.metadata;
+    const url = new URL('index.html', location.href);
+    url.search = ''; url.hash = '';
+    url.searchParams.set('type', mediaType); url.searchParams.set('title', String(id));
+    const panel = overlay.querySelector('.detail-share-feedback');
+    const status = panel.querySelector('[role="status"]');
+    const input = panel.querySelector('input');
+    panel.hidden = true; input.hidden = true;
+    button.disabled = true;
+    try {
+      if (typeof navigator.share === 'function') {
+        try {
+          await navigator.share({ title: `${title} | Flixgx`, url: url.href });
+          return;
+        } catch (error) {
+          if (error.name === 'AbortError' || !valid(token)) return;
+        }
+      }
+      if (!valid(token)) return;
+      try {
+        await navigator.clipboard.writeText(url.href);
+        if (!valid(token)) return;
+        status.textContent = 'Link copied!'; panel.hidden = false;
+      } catch {
+        if (!valid(token)) return;
+        status.textContent = 'Copy this link to share:';
+        input.value = url.href; input.hidden = false; panel.hidden = false;
+        input.focus(); input.select();
+      }
+    } finally {
+      if (valid(token)) button.disabled = false;
     }
   }
   function closeModal(event) {
@@ -261,6 +296,7 @@
       case 'retry': if (state) void openModal(state.id, state.type); break;
       case 'retry-season': if (state) void loadSeason(state.id, state.metadata.season); break;
       case 'play': play(undefined, button); break;
+      case 'share': void shareTitle(button); break;
       case 'description': {
         const expanded = button.getAttribute('aria-expanded') !== 'true';
         button.setAttribute('aria-expanded', String(expanded)); button.textContent = expanded ? 'Show less' : 'Read more';
@@ -297,10 +333,15 @@
     if (!active() || player()?.classList.contains('open')) return;
     if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); closeModal(); }
     if (event.key === 'Tab') {
-      const items = Array.from(overlay.querySelectorAll('button:not(:disabled),select:not(:disabled),a[href]')).filter(el => el.getClientRects().length);
+      const items = Array.from(overlay.querySelectorAll('button:not(:disabled),select:not(:disabled),input:not(:disabled),a[href]')).filter(el => el.getClientRects().length);
       if (!items.length) { event.preventDefault(); return; }
       if (event.shiftKey && (document.activeElement === items[0] || document.activeElement === overlay)) { event.preventDefault(); items.at(-1).focus(); }
       else if (!event.shiftKey && document.activeElement === items.at(-1)) { event.preventDefault(); items[0].focus(); }
     }
   });
+  // Shared links open details without automatically starting playback.
+  const shared = new URLSearchParams(location.search);
+  if (['movie', 'tv'].includes(shared.get('type')) && /^[1-9]\d*$/.test(shared.get('title') || '')) {
+    void openModal(shared.get('title'), shared.get('type'));
+  }
 })();
