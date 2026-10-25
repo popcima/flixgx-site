@@ -16,16 +16,20 @@ test('site serves the real player, hides private files, and routes movie/TV play
   for (const page of ['/', '/movies.html', '/tv.html', '/search.html']) {
     const response = await fetch(base + page), html = await response.text();
     assert.equal(response.status, 200);
+    assert.match(html, /rel="icon" type="image\/svg\+xml" href="assets\/favicon.svg"/);
     assert.match(html, /assets\/player.js/); assert.match(html, /id="fp-video"/);
     assert.match(html, /assets\/details.js/); assert.match(html, /assets\/details.css/);
     assert.match(html, /assets\/ads.js/); assert.match(html, /assets\/ads.css/);
     assert.doesNotMatch(html, /content-locker|ADBLUE|__fpPause|FAKE PLAYER/);
   }
+  const favicon = await fetch(base + '/favicon.ico');
+  assert.equal(favicon.status, 200);
+  assert.ok(favicon.headers.get('content-type').startsWith('image/x-icon'));
   const appPage = await fetch(base + '/app.html');
   assert.equal(appPage.status, 200);
   assert.ok(appPage.headers.get('content-type').startsWith('text/html'));
   assert.match(await appPage.text(), /Flixgx on your phone/);
-  for (const [asset, contentType] of [['catalog.js', 'text/javascript'], ['catalog.css', 'text/css'], ['ads.js', 'text/javascript'], ['ads.css', 'text/css'], ['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css'], ['app-page.css', 'text/css'], ['app-preview.png', 'image/png']]) {
+  for (const [asset, contentType] of [['favicon.svg', 'image/svg+xml'], ['favicon-32.png', 'image/png'], ['apple-touch-icon.png', 'image/png'], ['icon-192.png', 'image/png'], ['catalog.js', 'text/javascript'], ['catalog.css', 'text/css'], ['ads.js', 'text/javascript'], ['ads.css', 'text/css'], ['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css'], ['app-page.css', 'text/css'], ['app-preview.png', 'image/png']]) {
     const response = await fetch(`${base}/assets/${asset}`);
     assert.equal(response.status, 200);
     assert.ok(response.headers.get('content-type').startsWith(contentType));
