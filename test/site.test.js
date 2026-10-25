@@ -25,7 +25,7 @@ test('site serves the real player, hides private files, and routes movie/TV play
   assert.equal(appPage.status, 200);
   assert.ok(appPage.headers.get('content-type').startsWith('text/html'));
   assert.match(await appPage.text(), /Flixgx on your phone/);
-  for (const [asset, contentType] of [['ads.js', 'text/javascript'], ['ads.css', 'text/css'], ['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css'], ['app-page.css', 'text/css'], ['app-preview.png', 'image/png']]) {
+  for (const [asset, contentType] of [['catalog.js', 'text/javascript'], ['catalog.css', 'text/css'], ['ads.js', 'text/javascript'], ['ads.css', 'text/css'], ['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css'], ['app-page.css', 'text/css'], ['app-preview.png', 'image/png']]) {
     const response = await fetch(`${base}/assets/${asset}`);
     assert.equal(response.status, 200);
     assert.ok(response.headers.get('content-type').startsWith(contentType));
