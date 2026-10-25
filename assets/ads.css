@@ -1,0 +1,30 @@
+/* Ads use reserved content space, never floating above navigation or playback. */
+.site-ad { --ad-height: 90px; min-width: 0; width: 100%; margin: 38px auto; padding: 16px 0; text-align: center; font-family: 'DM Sans', system-ui, sans-serif; border-top: 1px solid rgba(255,255,255,.065); border-bottom: 1px solid rgba(255,255,255,.065); }
+.site-ad-label { display: block; margin: 0 0 10px; color: #9a9da6; font-size: 10px; line-height: 14px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+.site-ad-stage { display: flex; align-items: flex-start; justify-content: center; width: 100%; min-height: var(--ad-height); overflow: hidden; }
+.site-ad iframe { display: block; flex: 0 1 auto; border: 0; background: transparent; }
+.site-ad-shell { width: calc(100% - 72px); max-width: 1328px; margin-left: auto; margin-right: auto; }
+.site-ad[data-ad="native"] { --ad-height: 300px; margin-top: 58px; margin-bottom: 58px; }
+.site-ad[data-ad="native"] iframe { width: 100%; }
+.site-ad[data-ad="compact"] { --ad-height: 60px; }
+.site-ad-rail { display: none; }
+.site-ad-catalog { min-width: 0; }
+.site-ad-catalog > .main { min-width: 0; }
+.home-main > .site-ad { width: calc(100% - 72px); max-width: 1328px; margin-top: 0; margin-bottom: 48px; }
+.detail-below > .site-ad { margin-top: 46px; }
+@media (min-width: 1280px) {
+  .site-ad-catalog { display: grid; grid-template-columns: minmax(0,1fr) 160px; column-gap: 28px; max-width: 1600px; padding-right: 36px; margin: 0 auto; align-items: start; }
+  .site-ad-catalog > .main { width: 100%; padding-right: 0; }
+  .site-ad-rail { display: block; width: 160px; margin-top: 28px; }
+  .site-ad-rail[data-ad="tower"] { --ad-height: 600px; }
+  .site-ad-rail[data-ad="smallTower"] { --ad-height: 300px; }
+}
+@media (max-width: 799px) {
+  .site-ad[data-ad="wide"] { --ad-height: 60px; }
+}
+@media (max-width: 539px) {
+  .site-ad-shell, .home-main > .site-ad { width: calc(100% - 32px); }
+  .site-ad[data-ad="wide"], .site-ad[data-ad="compact"] { --ad-height: 250px; }
+  .site-ad { margin-top: 28px; margin-bottom: 28px; }
+  .site-ad[data-ad="native"] { margin-top: 36px; margin-bottom: 36px; }
+}

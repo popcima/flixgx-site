@@ -5,7 +5,7 @@ import { createApp } from './api/app.js';
 
 const root = new URL('../', import.meta.url);
 const pages = new Set(['index.html', 'movies.html', 'tv.html', 'search.html', 'app.html', 'admin.html', 'data.json', 'noirx-supabase.js']);
-const assets = new Set(['player.js', 'player.css', 'details.js', 'details.css', 'home.js', 'home.css', 'app-page.css', 'app-preview.png', 'player-config.js', 'subtitle-preferences.js', 'vendor/hls.min.js', 'vendor/HLS-LICENSE.txt']);
+const assets = new Set(['ads.js', 'ads.css', 'player.js', 'player.css', 'details.js', 'details.css', 'home.js', 'home.css', 'app-page.css', 'app-preview.png', 'player-config.js', 'subtitle-preferences.js', 'vendor/hls.min.js', 'vendor/HLS-LICENSE.txt']);
 const types = { html: 'text/html; charset=utf-8', js: 'text/javascript; charset=utf-8', css: 'text/css; charset=utf-8', json: 'application/json; charset=utf-8', txt: 'text/plain; charset=utf-8', png: 'image/png' };
 
 export function createSite(config, dependencies = {}) {

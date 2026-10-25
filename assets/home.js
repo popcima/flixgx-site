@@ -145,6 +145,7 @@
         button.dataset.rail = row.id; button.dataset.direction = index ? '1' : '-1'; button.innerHTML = icons[direction]; outer.append(button);
       });
       outer.append(rail); section.append(head, outer); $('main-content').append(section);
+      if (row.id === 'row-top10') { const ad = document.createElement('aside'); ad.dataset.ad = 'wide'; $('main-content').append(ad); }
     });
   }
   function createCard(item, rank = null) {

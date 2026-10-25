@@ -155,6 +155,7 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
 </style>
 <link rel="stylesheet" href="assets/player.css">
 <link rel="stylesheet" href="assets/details.css">
+<link rel="stylesheet" href="assets/ads.css">
 </head>
 <body>
 
@@ -198,9 +199,15 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
 </div>
 
 <!-- MAIN -->
+<aside class="site-ad-shell" data-ad="wide" aria-label="Advertisement"></aside>
+<div class="site-ad-catalog">
 <main class="main" id="main-area">
   <!-- populated by JS -->
 </main>
+<aside class="site-ad-rail" data-ad="smallTower" aria-label="Advertisement"></aside>
+</div>
+
+<aside class="site-ad-shell" data-ad="native" aria-label="Advertisement"></aside>
 
 <footer>
   <div class="footer-left">
@@ -493,5 +500,6 @@ showEmptyState();
 <script src="assets/player-config.js"></script>
 <script src="assets/details.js"></script>
 <script type="module" src="assets/player.js"></script>
+<script src="assets/ads.js"></script>
 </body>
 </html>

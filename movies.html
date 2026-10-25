@@ -133,6 +133,7 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
 </style>
 <link rel="stylesheet" href="assets/player.css">
 <link rel="stylesheet" href="assets/details.css">
+<link rel="stylesheet" href="assets/ads.css">
 </head>
 <body>
 
@@ -199,6 +200,8 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
   </div>
 </div>
 
+<aside class="site-ad-shell" data-ad="wide" aria-label="Advertisement"></aside>
+<div class="site-ad-catalog">
 <main class="main">
   <div class="results-bar">
     <div class="results-count" id="results-count">Loading…</div>
@@ -219,6 +222,10 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
     </button>
   </div>
 </main>
+<aside class="site-ad-rail" data-ad="tower" aria-label="Advertisement"></aside>
+</div>
+
+<aside class="site-ad-shell" data-ad="native" aria-label="Advertisement"></aside>
 
 <footer>
   <div class="footer-left">
@@ -398,5 +405,6 @@ load(true).then(()=>{const ov=document.getElementById('loading-overlay');ov.clas
 <script src="assets/player-config.js"></script>
 <script src="assets/details.js"></script>
 <script type="module" src="assets/player.js"></script>
+<script src="assets/ads.js"></script>
 </body>
 </html>

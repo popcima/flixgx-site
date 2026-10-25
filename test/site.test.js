@@ -18,17 +18,20 @@ test('site serves the real player, hides private files, and routes movie/TV play
     assert.equal(response.status, 200);
     assert.match(html, /assets\/player.js/); assert.match(html, /id="fp-video"/);
     assert.match(html, /assets\/details.js/); assert.match(html, /assets\/details.css/);
+    assert.match(html, /assets\/ads.js/); assert.match(html, /assets\/ads.css/);
     assert.doesNotMatch(html, /content-locker|ADBLUE|__fpPause|FAKE PLAYER/);
   }
   const appPage = await fetch(base + '/app.html');
   assert.equal(appPage.status, 200);
   assert.ok(appPage.headers.get('content-type').startsWith('text/html'));
   assert.match(await appPage.text(), /Flixgx on your phone/);
-  for (const [asset, contentType] of [['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css'], ['app-page.css', 'text/css'], ['app-preview.png', 'image/png']]) {
+  for (const [asset, contentType] of [['ads.js', 'text/javascript'], ['ads.css', 'text/css'], ['details.js', 'text/javascript'], ['details.css', 'text/css'], ['home.js', 'text/javascript'], ['home.css', 'text/css'], ['app-page.css', 'text/css'], ['app-preview.png', 'image/png']]) {
     const response = await fetch(`${base}/assets/${asset}`);
     assert.equal(response.status, 200);
     assert.ok(response.headers.get('content-type').startsWith(contentType));
   }
+  const admin = await (await fetch(base + '/admin.html')).text();
+  assert.doesNotMatch(admin, /assets\/ads\.(js|css)|data-ad=/);
   for (const path of ['/.env', '/server/index.js', '/package.json', '/assets/../server/site.js', '/content-locker/adblue-config.js']) assert.equal((await fetch(base + path)).status, 404);
   assert.equal((await fetch(base + '/v1/streams/movie/98')).status, 401);
   const movie = await fetch(base + '/api/playback/movie/98', { headers: { Origin: 'https://flixgx.com' } });
