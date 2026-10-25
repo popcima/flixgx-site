@@ -234,7 +234,16 @@
         if (title.season !== state.metadata.season) void loadSeason(state.id, title.season, title.episode);
         else { state.metadata.episode = title.episode; updatePlay(); }
       }
-      if (state.playerFocus?.isConnected) state.playerFocus.focus({ preventScroll: true }); else focusBack();
+      const resumedState = state, token = version;
+      // WebKit may reject focus until the restored visibility and inert state paint.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (state !== resumedState || token !== version || state.suspended || !active() || overlay.inert || player()?.classList.contains('open')) return;
+        const focused = document.activeElement;
+        if (overlay.contains(focused) && focused !== overlay) return;
+        const target = resumedState.playerFocus;
+        if (target?.isConnected && overlay.contains(target) && !target.disabled) target.focus({ preventScroll: true });
+        else focusBack();
+      }));
       return true;
     }
   };

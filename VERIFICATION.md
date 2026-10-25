@@ -67,3 +67,5 @@ The shared cinematic details view passed independent visual and interaction revi
 All 33 API/site tests passed. The updated site test also verifies that the shared details JavaScript and CSS are served with their expected MIME types. All four catalog pages' inline scripts and the new controller passed syntax checks; the Pages build and Git whitespace check passed.
 
 The local static preview uses the production API URL, whose CORS configuration accepts the production site rather than the preview origin. Local playback failures therefore do not validate provider availability. Trailer embedding/autoplay depends on the selected title, browser, and YouTube; the page keeps its artwork when a preview cannot play. Native iOS/Safari devices were not tested.
+
+After publishing, Search → Breaking Bad → Play S1 E1 on `https://flixgx.com` decoded video at 854×480 with advancing time, `readyState` 4, and a 3,500.08-second duration. Closing playback cleared the media source and restored the title details. A subsequent WebKit focus-timing correction was verified in the built preview: Escape returns focus to the initiating Play button after the details layer becomes visible.
