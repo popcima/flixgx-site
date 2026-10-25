@@ -7,64 +7,72 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/home.css">
 <link rel="stylesheet" href="assets/player.css">
 <link rel="stylesheet" href="assets/details.css">
 </head>
 <body>
 <a class="home-skip" href="#main-content">Skip to titles</a>
-<header class="home-header">
-  <a href="index.html" class="home-brand" aria-label="Flixgx home">FLIX<span>GX</span></a>
-  <nav class="home-nav" aria-label="Main navigation">
-    <a href="index.html" id="nav-home" aria-current="page">Home</a>
-    <a href="movies.html" id="nav-movies">Movies</a>
-    <a href="tv.html" id="nav-tv">TV Shows</a>
-    <a href="search.html" id="nav-search" class="home-search" aria-label="Search titles">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>Search</span>
+<header class="home-header" id="home-header">
+  <div class="home-header-inner home-container">
+    <a href="index.html" class="home-brand" aria-label="Flixgx home">
+      <span class="home-brand-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="home-brand-word"><span>FLIX</span>GX</span>
     </a>
-  </nav>
+    <nav class="home-nav" aria-label="Main navigation">
+      <a href="index.html" id="nav-home" aria-current="page" aria-label="Home" title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v12H3Z"/><path d="M9 21V12h6v9"/></svg><span>Home</span></a>
+      <a href="movies.html" id="nav-movies" aria-label="Movies" title="Movies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 7h5m10 0h5M2 17h5m10 0h5M7 12h10"/></svg><span>Movies</span></a>
+      <a href="tv.html" id="nav-tv" aria-label="Series" title="Series"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="m7 2 5 5 5-5"/></svg><span>Series</span></a>
+    </nav>
+    <div class="home-header-actions">
+      <a href="search.html" id="nav-search" class="home-header-icon" aria-label="Search titles" title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg></a>
+      <button class="home-header-icon" type="button" id="home-list-toggle" aria-label="My List" aria-haspopup="dialog" aria-expanded="false" aria-controls="home-list" title="My List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="6.5" r="3.5"/></svg></button>
+    </div>
+  </div>
 </header>
 
 <section class="home-hero" id="hero" aria-labelledby="hero-heading" aria-busy="true">
   <img class="home-hero-art" id="hero-bg" alt="" fetchpriority="high">
   <div class="home-hero-shade" aria-hidden="true"></div>
-  <div class="home-hero-info">
-    <p class="home-eyebrow">Featured</p>
-    <h1 class="home-hero-heading" id="hero-heading">Loading featured titles…</h1>
-    <div class="home-hero-meta" id="hero-meta"></div>
-    <p class="home-hero-description" id="hero-description"></p>
-    <div class="home-actions" id="hero-actions">
-      <button class="home-play" id="hero-play" type="button" disabled>
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m7 3 15 9-15 9Z"/></svg>Play
-      </button>
-      <button class="home-info-button" id="hero-info" type="button" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9v.1"/></svg>More info
-      </button>
-      <button class="home-circle" id="hero-watchlist" type="button" aria-label="Add to My List" aria-pressed="false" title="Add to My List" disabled></button>
-    </div>
-    <p id="hero-notice" class="home-hero-notice" role="status"></p>
-    <div id="hero-error" class="home-hero-error" hidden>
-      Featured titles could not load. You can still browse the catalog below.
-      <button type="button" class="home-retry" id="hero-retry">Try again</button>
+  <div class="home-container">
+    <div class="home-hero-info">
+      <h1 class="home-hero-heading" id="hero-heading">Loading featured titles…</h1>
+      <div class="home-hero-meta" id="hero-meta"></div>
+      <p class="home-hero-description" id="hero-description"></p>
+      <div class="home-actions" id="hero-actions">
+        <button class="home-play" id="hero-play" type="button" disabled><svg viewBox="0 0 15 15" fill="currentColor" aria-hidden="true"><path d="m2 1 11 6.5L2 14Z"/></svg>Play</button>
+        <button class="home-info-button" id="hero-info" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9v.1"/></svg>See More</button>
+      </div>
+      <p id="hero-notice" class="home-hero-notice" role="status"></p>
+      <div id="hero-error" class="home-hero-error" hidden>Featured titles could not load. You can still browse the catalog below.<button type="button" class="home-retry" id="hero-retry">Try again</button></div>
     </div>
   </div>
-  <div class="home-featured-nav" role="group" aria-label="Featured titles">
-    <button class="home-circle" type="button" id="hero-previous" aria-label="Previous featured title" disabled></button>
-    <span class="home-featured-count" aria-hidden="true"><strong id="hero-count-current">00</strong> / <span id="hero-count-total">00</span></span>
-    <button class="home-circle" type="button" id="hero-next" aria-label="Next featured title" disabled></button>
-  </div>
+  <div class="home-featured-dots" id="hero-dots" role="group" aria-label="Choose a featured title"></div>
+  <button class="home-hero-arrow" type="button" id="hero-previous" aria-label="Previous featured title" disabled></button>
+  <button class="home-hero-arrow" type="button" id="hero-next" aria-label="Next featured title" disabled></button>
   <div id="hero-announcement" class="home-sr-only" role="status" aria-live="polite"></div>
 </section>
 
 <main class="home-main" id="main-content" aria-label="Browse movies and TV shows" tabindex="-1"></main>
 
 <footer class="home-footer">
-  <div>
-    <a href="index.html" class="home-brand" aria-label="Flixgx home">FLIX<span>GX</span></a>
-    <p class="home-footer-description">A flixgx product by CinemaOS. All film data provided by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB</a>. flixgx does not host or store any media files.</p>
+  <div class="home-container">
+    <p class="home-footer-brand">Flixgx</p>
+    <p class="home-footer-description">A flixgx product by CinemaOS. flixgx does not host or store any media files. All film data provided by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB</a>.</p>
+    <p class="home-footer-credit">Streaming availability in the United States by TMDB and <a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">JustWatch</a>.</p>
   </div>
-  <p class="home-footer-copy">© 2026 flixgx. All rights reserved.</p>
 </footer>
+
+<dialog class="home-list" id="home-list" aria-labelledby="home-list-title" aria-describedby="home-list-count">
+  <div class="home-list-header">
+    <div><h2 id="home-list-title">My List</h2><p class="home-list-count" id="home-list-count"></p></div>
+    <button class="home-list-close" type="button" id="home-list-close" aria-label="Close My List"></button>
+  </div>
+  <p class="home-list-empty" id="home-list-empty"><strong>Your next watch starts here.</strong>Open any title and press + to save it to My List.</p>
+  <ul class="home-list-items" id="home-list-items"></ul>
+  <p class="home-list-notice" id="home-list-notice" role="status"></p>
+</dialog>
 
 <!-- Shared title details and playback keep their existing behavior. -->
 <div id="modal-backdrop" class="details-page" role="dialog" aria-modal="true" aria-label="Title details" aria-hidden="true" tabindex="-1" inert></div>
