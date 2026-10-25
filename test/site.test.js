@@ -17,7 +17,13 @@ test('site serves the real player, hides private files, and routes movie/TV play
     const response = await fetch(base + page), html = await response.text();
     assert.equal(response.status, 200);
     assert.match(html, /assets\/player.js/); assert.match(html, /id="fp-video"/);
+    assert.match(html, /assets\/details.js/); assert.match(html, /assets\/details.css/);
     assert.doesNotMatch(html, /content-locker|ADBLUE|__fpPause|FAKE PLAYER/);
+  }
+  for (const [asset, contentType] of [['details.js', 'text/javascript'], ['details.css', 'text/css']]) {
+    const response = await fetch(`${base}/assets/${asset}`);
+    assert.equal(response.status, 200);
+    assert.ok(response.headers.get('content-type').startsWith(contentType));
   }
   for (const path of ['/.env', '/server/index.js', '/package.json', '/assets/../server/site.js', '/content-locker/adblue-config.js']) assert.equal((await fetch(base + path)).status, 404);
   assert.equal((await fetch(base + '/v1/streams/movie/98')).status, 401);

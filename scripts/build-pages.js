@@ -13,11 +13,11 @@ if (origin) {
   await writeFile('dist/assets/player-config.js', config);
 }
 else console.warn('Set STREAM_API_ORIGIN or edit assets/player-config.js before publishing on GitHub Pages.');
-// Ship player fixes and API cutovers without reusing older cached scripts.
-for (const asset of ['player-config.js', 'player.js']) {
+// Ship interface fixes and API cutovers without reusing older cached assets.
+for (const asset of ['player-config.js', 'player.js', 'player.css', 'details.js', 'details.css']) {
   const version = createHash('sha256').update(await readFile(`dist/assets/${asset}`)).digest('hex').slice(0, 12);
   for (const page of ['index.html', 'movies.html', 'tv.html', 'search.html']) {
     const path = `dist/${page}`, html = await readFile(path, 'utf8');
-    await writeFile(path, html.replace(`src="assets/${asset}"`, `src="assets/${asset}?v=${version}"`));
+    await writeFile(path, html.replace(`="assets/${asset}"`, `="assets/${asset}?v=${version}"`));
   }
 }

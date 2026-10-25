@@ -8,6 +8,8 @@ English subtitles are selected when available; the viewer's language or Off choi
 
 The catalog layout, existing TMDB catalog configuration, Supabase login and home-section editing are preserved. Legacy intro/override admin tools remain for the existing database, but no longer control public playback. No Supabase data was deleted.
 
+Title details use a shared full-screen layout in `assets/details.js` and `assets/details.css`: landscape artwork, title logos, cast, recommendations, and TV season/episode cards come from TMDB. Play opens the existing player; closing it restores the details view and its scroll position. My List is saved locally in the current browser. Official trailer previews start muted when embedding and autoplay are available, with artwork as the fallback; reduced-motion and data-saving preferences disable the preview.
+
 ## Run locally
 
 Install Node.js 22 or newer, then run these commands from this folder:

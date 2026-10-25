@@ -152,70 +152,9 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
 .dmca-badge svg{width:13px;height:13px}
 .footer-copy{font-size:12px;color:rgba(255,255,255,.25)}
 
-/* MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .28s}
-.modal-backdrop.open{opacity:1;pointer-events:auto}
-.modal{background:#111;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow:hidden;overflow-y:auto;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 80px rgba(0,0,0,.9);transform:scale(.94) translateY(16px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);scrollbar-width:none}
-.modal::-webkit-scrollbar{display:none}
-.modal-backdrop.open .modal{transform:scale(1) translateY(0)}
-.modal-poster{position:relative;width:100%;aspect-ratio:2/3;background:#1a1a1a;overflow:hidden}
-.modal-poster img{width:100%;height:100%;object-fit:cover;display:block}
-.modal-poster-grad{position:absolute;inset:0;background:linear-gradient(to top,#111 0%,rgba(17,17,17,.4) 40%,transparent 70%);pointer-events:none}
-.modal-rating-badge{position:absolute;top:12px;right:12px;background:rgba(10,10,10,.82);backdrop-filter:blur(10px);border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px;z-index:2}
-.modal-rating-badge svg{width:12px;height:12px;fill:#fbbf24;flex-shrink:0}
-.modal-close{position:absolute;top:12px;left:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .15s;font-family:inherit}
-.modal-close:hover{background:rgba(0,0,0,.85)}
-.modal-close svg{width:16px;height:16px}
-.modal-play-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.7);cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),background .15s;z-index:5;border:none;font-family:inherit}
-.modal-play-center:hover{transform:translate(-50%,-50%) scale(1.1);background:#fff}
-.modal-play-center svg{width:22px;height:22px;fill:#111;margin-left:3px}
-.modal-type-tag{position:absolute;bottom:16px;left:16px;padding:4px 10px;font-size:9px;text-transform:uppercase;font-weight:900;letter-spacing:.15em;border-radius:5px;border:1px solid var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);z-index:2}
-.modal-body{padding:4px 20px 24px}
-.modal-title{font-size:22px;font-weight:900;color:var(--text);line-height:1.2;margin-bottom:6px;letter-spacing:-.02em}
-.modal-meta-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:14px;flex-wrap:wrap}
-.dot{opacity:.45}
-.modal-genres{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.modal-genre-chip{padding:4px 10px;font-size:11px;font-weight:600;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--muted)}
-.modal-overview{font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:20px}
-.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
-.modal-btn-play{flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:7px;height:44px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit;transition:filter .15s,transform .15s;text-decoration:none}
-.modal-btn-play:hover{filter:brightness(1.12)}
-.modal-btn-play:active{transform:scale(.97)}
-.modal-btn-play svg{width:13px;height:13px;fill:#fff;flex-shrink:0}
-.modal-btn-secondary{display:flex;align-items:center;justify-content:center;gap:7px;height:44px;padding:0 18px;border-radius:10px;background:rgba(255,255,255,.07);color:var(--text);font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,.12);cursor:pointer;font-family:inherit;transition:background .15s,transform .15s;flex-shrink:0}
-.modal-btn-secondary:hover{background:rgba(255,255,255,.13)}
-.modal-btn-secondary svg{width:15px;height:15px}
-.modal-loading{display:flex;align-items:center;justify-content:center;height:300px}
-.modal-spinner{width:32px;height:32px;border:2px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.modal-seasons-wrap{padding:0 20px;margin-bottom:4px}
-.modal-seasons-label{font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.modal-seasons-label::before{content:'';width:3px;height:18px;background:var(--accent);border-radius:2px;flex-shrink:0}
-.modal-season-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-.modal-season-tabs::-webkit-scrollbar{display:none}
-.modal-season-tab{flex-shrink:0;padding:6px 16px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .18s}
-.modal-season-tab:hover{color:var(--text);border-color:rgba(255,255,255,.3)}
-.modal-season-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.modal-episodes-list{padding:0 20px 24px;display:flex;flex-direction:column;gap:2px;margin-top:12px}
-.modal-episode{display:flex;align-items:flex-start;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;border:none;background:transparent;width:100%;text-align:left;font-family:inherit}
-.modal-episode:hover{background:rgba(255,255,255,.06)}
-.modal-ep-thumb{position:relative;width:120px;min-width:120px;height:68px;border-radius:8px;overflow:hidden;background:#222;flex-shrink:0}
-.modal-ep-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.modal-ep-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1e1e1e}
-.modal-ep-thumb-placeholder svg{width:24px;height:24px;opacity:.3}
-.modal-ep-thumb img.ep-thumb-fallback{filter:brightness(.5)}
-.modal-ep-play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);opacity:0;transition:opacity .2s}
-.modal-episode:hover .modal-ep-play-overlay{opacity:1}
-.modal-ep-play-overlay svg{width:20px;height:20px;fill:#fff}
-.modal-ep-num{position:absolute;bottom:4px;left:6px;font-size:10px;font-weight:800;color:rgba(255,255,255,.7);text-shadow:0 1px 4px rgba(0,0,0,.8)}
-.modal-ep-info{flex:1;min-width:0;padding-top:2px}
-.modal-ep-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.modal-ep-meta{font-size:11px;color:var(--muted);margin-bottom:5px}
-.modal-ep-desc{font-size:12px;color:rgba(255,255,255,.38);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.modal-ep-loading{display:flex;align-items:center;justify-content:center;height:80px;color:var(--muted);font-size:13px}
-
 </style>
 <link rel="stylesheet" href="assets/player.css">
+<link rel="stylesheet" href="assets/details.css">
 </head>
 <body>
 
@@ -278,12 +217,7 @@ footer{padding:36px 36px 40px;border-top:1px solid var(--liquid-border);display:
   </div>
 </footer>
 
-<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <div class="modal-loading" id="modal-loading"><div class="modal-spinner"></div></div>
-    <div id="modal-inner" style="display:none"></div>
-  </div>
-</div>
+<div id="modal-backdrop" class="details-page" role="dialog" aria-modal="true" aria-label="Title details" aria-hidden="true" tabindex="-1" inert></div>
 
 
 <div id="fp-overlay" class="stream-player" role="dialog" aria-modal="true" aria-labelledby="stream-title" aria-hidden="true" tabindex="-1">
@@ -549,49 +483,7 @@ async function doSearch(query){
 }
 
 // MODAL
-function openModal(id,mediaType){
-  const bd=document.getElementById('modal-backdrop'),ld=document.getElementById('modal-loading'),inn=document.getElementById('modal-inner');
-  ld.style.display='flex';inn.style.display='none';inn.innerHTML='';bd.classList.add('open');document.body.style.overflow='hidden';
-  const type=mediaType==='tv'?'tv':'movie';
-  tmdb(`/${type}/${id}`).then(d=>{
-    const title=d.title||d.name||'Untitled',year=(d.release_date||d.first_air_date||'').slice(0,4),poster=d.poster_path?IMG_ORIG+d.poster_path:'',bdUrl=d.backdrop_path?IMG_ORIG+d.backdrop_path:poster,rate=d.vote_average?(+d.vote_average).toFixed(1):'—',overview=d.overview||'No description available.',genres=(d.genres||[]).slice(0,4).map(g=>`<span class="modal-genre-chip">${g.name}</span>`).join(''),isTV=type==='tv';
-    let runtime='',runtimeSecs=6120;
-    if(!isTV&&d.runtime){const h=Math.floor(d.runtime/60),m=d.runtime%60;runtime=h?`${h}h ${m}m`:`${m}m`;runtimeSecs=d.runtime*60}
-    else if(isTV&&d.number_of_seasons)runtime=`${d.number_of_seasons} Season${d.number_of_seasons>1?'s':''}`;
-    window.__fp={id:d.id,mediaType:type,title,subtitle:year+(runtime?'  ·  '+runtime:''),backdropUrl:bdUrl,runtimeSecs,seasons:d.seasons||[]};
-    window.preparePlayer?.(window.__fp);
-    inn.innerHTML=`<div class="modal-poster">${poster?`<img src="${poster}" alt="${title}">`:`<div style="width:100%;height:100%;background:#222"></div>`}<div class="modal-poster-grad"></div><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="modal-rating-badge"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#fbbf24" stroke="#fbbf24"/></svg>${rate}</div><button class="modal-play-center" onclick="event.stopPropagation();const f=window.__fp||{};if(window.openPlayer)window.openPlayer(f);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button><span class="modal-type-tag">${isTV?'SERIES':'FILM'}</span></div><div class="modal-body"><h2 class="modal-title">${title}</h2><div class="modal-meta-row">${year?`<span>${year}</span><span class="dot">·</span>`:''} ${runtime?`<span>${runtime}</span><span class="dot">·</span>`:''}<span style="color:rgba(255,255,255,.35);font-size:11px;text-transform:uppercase;letter-spacing:.08em">${isTV?'Series':'Movie'}</span></div><div class="modal-actions"><button class="modal-btn-play" onclick="event.stopPropagation();const f=window.__fp||{};if(window.openPlayer)window.openPlayer(f);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play Now</button><button class="modal-btn-secondary" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Watchlist</button></div></div>${isTV?`<div class="modal-seasons-wrap"><div class="modal-seasons-label">Episodes</div><div class="modal-season-tabs" id="modal-season-tabs">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>`<button class="modal-season-tab" data-season="${s.season_number}" onclick="loadSeason(${d.id},${s.season_number})">${s.name}</button>`).join('')}</div></div><div class="modal-episodes-list" id="modal-episodes-list"><div class="modal-ep-loading">Loading episodes…</div></div>`:''}<div style="padding:0 20px 24px">${genres?`<div class="modal-genres">${genres}</div>`:''}<p class="modal-overview">${overview}</p></div>`;
-    ld.style.display='none';inn.style.display='block';
-    if(isTV){const seasons=(d.seasons||[]).filter(s=>s.season_number>0);if(seasons.length)loadSeason(d.id,seasons[0].season_number)}
-  }).catch(()=>{inn.innerHTML=`<div style="padding:40px;text-align:center;color:var(--muted)">Failed to load.</div>`;ld.style.display='none';inn.style.display='block'});
-}
-
-async function loadSeason(sid,snum){
-  Object.assign(window.__fp, { season: snum, episode: 1, episodes: [] });
-  document.querySelectorAll('.modal-season-tab').forEach(b=>b.classList.toggle('active',+b.dataset.season===snum));
-  const list=document.getElementById('modal-episodes-list');if(!list)return;
-  list.innerHTML=`<div class="modal-ep-loading">Loading…</div>`;
-  try{
-    const data=await tmdb(`/tv/${sid}/season/${snum}`);if(window.__fp?.id!==sid || window.__fp?.season!==snum)return;
-    const eps=data.episodes||[]; window.__fp.episodes=eps; window.__fp.episode=eps[0]?.episode_number||1;
-    if(!eps.length){list.innerHTML=`<div class="modal-ep-loading">No episodes.</div>`;return}
-    list.innerHTML=eps.map(ep=>{const thumb=ep.still_path?`https://image.tmdb.org/t/p/w300${ep.still_path}`:null,showBd=(window.__fp&&window.__fp.backdropUrl)?window.__fp.backdropUrl.replace('/original/','/w300/'):'',rt=ep.runtime?`${ep.runtime}m`:'',ad=(ep.air_date||'').slice(0,4),meta=[rt,ad].filter(Boolean).join(' · ');
-      return `<button class="modal-episode" onclick="event.stopPropagation();openEpisode(${snum},${ep.episode_number})"><div class="modal-ep-thumb">${thumb?`<img src="${thumb}" loading="lazy">`:showBd?`<img class="ep-thumb-fallback" src="${showBd}" loading="lazy">`:`<div class="modal-ep-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div>`}<div class="modal-ep-play-overlay"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span class="modal-ep-num">E${ep.episode_number}</span></div><div class="modal-ep-info"><div class="modal-ep-title">${ep.name||'Episode '+ep.episode_number}</div>${meta?`<div class="modal-ep-meta">${meta}</div>`:''} ${ep.overview?`<div class="modal-ep-desc">${ep.overview}</div>`:''}</div></button>`;
-    }).join('');
-  }catch{list.innerHTML=`<div class="modal-ep-loading">Failed to load.</div>`}
-}
-
-function closeModal(e){if(e&&e.target!==document.getElementById('modal-backdrop'))return;document.getElementById('modal-backdrop').classList.remove('open');document.body.style.overflow=''}
-function openEpisode(sn, en) {
-  const f = window.__fp || {};
-  const ep = (f.episodes || []).find(item => item.episode_number === en);
-  if (window.openPlayer) window.openPlayer({ ...f, mediaType: 'tv', season: sn, episode: en, episodeName: ep?.name || `Episode ${en}` });
-}
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&!document.getElementById('fp-overlay').classList.contains('open')){if(document.getElementById('fp-overlay').classList.contains('open')){window.closePlayer&&window.closePlayer();return}const bd=document.getElementById('modal-backdrop');if(bd.classList.contains('open')){bd.classList.remove('open');document.body.style.overflow=''}}
-});
-
+// Full-screen title details are provided by assets/details.js.
 // Initial state
 showEmptyState();
 
@@ -599,6 +491,7 @@ showEmptyState();
 
 <script src="assets/vendor/hls.min.js"></script>
 <script src="assets/player-config.js"></script>
+<script src="assets/details.js"></script>
 <script type="module" src="assets/player.js"></script>
 </body>
 </html>

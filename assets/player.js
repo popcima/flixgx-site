@@ -449,6 +449,7 @@ window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0, r
   currentTitle = title;
   if (!overlay.classList.contains('open')) {
     returnFocus = document.activeElement;
+    window.FLIXGX_DETAILS?.suspendForPlayer();
     document.getElementById('modal-backdrop')?.classList.remove('open');
     // Modal also locks scrolling; restore normal catalog scrolling on close.
     previousOverflow = document.body.style.overflow === 'hidden' ? '' : document.body.style.overflow;
@@ -474,12 +475,14 @@ window.openPlayer = async function (metadata, { refresh = false, resumeAt = 0, r
 };
 
 window.closePlayer = function () {
+  const closingTitle = currentTitle;
   generation++; episodeRequest++; resetMedia(); currentTitle = null;
   if (document.fullscreenElement === overlay) document.exitFullscreen().catch(() => {});
   if (document.pictureInPictureElement === video) document.exitPictureInPicture().catch(() => {});
   overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = previousOverflow || '';
   background.forEach(([el, inert]) => { el.inert = inert; }); background = [];
+  if (window.FLIXGX_DETAILS?.resumeFromPlayer(closingTitle)) return;
   const focusTarget = returnFocus?.isConnected && returnFocus.getClientRects().length && !returnFocus.closest('#modal-backdrop') ? returnFocus : Array.from(document.querySelectorAll('a[href],button')).find(el => !overlay.contains(el) && !el.closest('#modal-backdrop') && el.getClientRects().length);
   focusTarget?.focus();
 };

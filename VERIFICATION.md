@@ -59,3 +59,11 @@ TV playback now has a dedicated **Seasons & episodes** button at the top of the 
 Live Chromium checks passed for desktop 1440×950, portrait 390×844 and landscape 844×390; the panel stays below its trigger and within the viewport. Keyboard focus and Escape, outside-click dismissal, one menu open at a time, and opening the panel inside fullscreen all passed. All four public page mounts show the TV control and hide it when switching to a movie. No JavaScript page errors were recorded.
 
 Actual Breaking Bad playback was verified from season 1 episode 1 through the top menu to season 2 episode 1, then episode 2, then Next episode 3. Each selection requested the matching playback endpoint and decoded video with advancing time. The 13 existing server/API tests passed again.
+
+## Full-screen title details — 2026-10-25
+
+The shared cinematic details view passed independent visual and interaction review at desktop 1440px, reference 966px, tablet 768px, and mobile 390px/375px widths. Checks covered real movie/TV artwork, logos, cast and recommendations; synopsis expansion; My List; season changes; correct episode metadata passed to the player; and returning from playback to the same details section. No horizontal overflow was found.
+
+All 33 API/site tests passed. The updated site test also verifies that the shared details JavaScript and CSS are served with their expected MIME types. All four catalog pages' inline scripts and the new controller passed syntax checks; the Pages build and Git whitespace check passed.
+
+The local static preview uses the production API URL, whose CORS configuration accepts the production site rather than the preview origin. Local playback failures therefore do not validate provider availability. Trailer embedding/autoplay depends on the selected title, browser, and YouTube; the page keeps its artwork when a preview cannot play. Native iOS/Safari devices were not tested.
